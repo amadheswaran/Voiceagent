@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Agent - Admin Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-section {
+            margin-bottom: 30px;
+        }
+
+        .menu-section-title {
+            padding: 0 20px 10px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .menu-item {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            padding-left: 30px;
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+        }
+
+        .content-header h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .content-header p {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        .section-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+
+        .section-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .section-content {
+            padding: 30px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 5px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #cbd5e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(26px);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
+
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Service Manager */
+        .service-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .service-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .service-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* FAQ Manager */
+        .faq-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .faq-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .faq-answer {
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-enabled {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-disabled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Industry Templates */
+        .industry-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .industry-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .industry-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .industry-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .industry-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .industry-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Appointments Management */
+        .appointment-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .appointment-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .appointment-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .appointment-field label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .appointment-field span {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .appointment-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 150px;
+        }
+
+        .status-select {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Reports & Analytics */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card h3 {
+            font-size: 36px;
+            margin: 0 0 8px 0;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .stat-card p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .report-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .report-section h4 {
+            margin: 0 0 20px 0;
+            color: #2d3748;
+            font-size: 18px;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .service-breakdown {
+            display: grid;
+            gap: 15px;
+        }
+
+        .service-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .service-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .service-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .service-stat-value {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .service-stat-label {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .peak-hours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+
+        .hour-slot {
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .hour-slot.peak {
+            background: #667eea;
+            color: white;
+        }
+
+        .hour-time {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .hour-count {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-details {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-item {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>🤖 Admin Panel</h1>
+                <p>AI Voice Agent Settings</p>
+            </div>
+
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">Business Setup</div>
+                    <button class="menu-item active" onclick="showSection('business-info')">
+                        <i>🏢</i> Business Information
+                    </button>
+                    <button class="menu-item" onclick="showSection('business-hours')">
+                        <i>🕐</i> Business Hours
+                    </button>
+                    <button class="menu-item" onclick="showSection('services')">
+                        <i>💇</i> Services & Pricing
+                    </button>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Conversation</div>
+                    <button class="menu-item" onclick="showSection('faq')">
+                        <i>❓</i> FAQ Responses
+                    </button>
+                    <button class="menu-item" onclick="showSection('responses')">
+                        <i>💬</i> Automated Responses
+                    </button>
+                    <button class="menu-item" onclick="showSection('voice')">
+                        <i>🎤</i> Voice Settings
+                    </button>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Integrations</div>
+                    <button class="menu-item" onclick="showSection('calendar')">
+                        <i>📅</i> Google Calendar
+                    </button>
+                    <button class="menu-item" onclick="showSection('reminders')">
+                        <i>🔔</i> Reminders
+                    </button>
+                    <button class="menu-item" onclick="showSection('channels')">
+                        <i>📱</i> Multi-Channel
+                    </button>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Appearance</div>
+                    <button class="menu-item" onclick="showSection('branding')">
+                        <i>🎨</i> Branding & Theme
+                    </button>
+                    <button class="menu-item" onclick="showSection('ui')">
+                        <i>🖥️</i> Interface Settings
+                    </button>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Management</div>
+                    <button class="menu-item" onclick="showSection('appointments')">
+                        <i>📅</i> Appointment Manager
+                    </button>
+                    <button class="menu-item" onclick="showSection('reports')">
+                        <i>📈</i> Reports & Analytics
+                    </button>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">Advanced</div>
+                    <button class="menu-item" onclick="showSection('security')">
+                        <i>🔒</i> Security
+                    </button>
+                    <button class="menu-item" onclick="showSection('analytics')">
+                        <i>📊</i> Analytics
+                    </button>
+                    <button class="menu-item" onclick="showSection('industry')">
+                        <i>🏭</i> Industry Templates
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h2>AI Voice Agent Configuration</h2>
+                <p>Customize your AI assistant for your business needs</p>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Business Information Section -->
+            <div class="settings-section active" id="business-info">
+                <div class="section-header">
+                    <h3>Business Information</h3>
+                    <p>Basic information about your business</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="businessName">Business Name</label>
+                            <input type="text" id="businessName" placeholder="Your Business Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessPhone">Phone Number</label>
+                            <input type="text" id="businessPhone" placeholder="+1 (555) 123-4567">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="businessEmail">Email Address</label>
+                            <input type="email" id="businessEmail" placeholder="contact@yourbusiness.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="businessWebsite">Website</label>
+                            <input type="url" id="businessWebsite" placeholder="https://yourbusiness.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="businessAddress">Address</label>
+                        <textarea id="businessAddress" placeholder="Your business address"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="businessTimezone">Timezone</label>
+                            <select id="businessTimezone">
+                                <option value="America/New_York">Eastern Time</option>
+                                <option value="America/Chicago">Central Time</option>
+                                <option value="America/Denver">Mountain Time</option>
+                                <option value="America/Los_Angeles">Pacific Time</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="businessCurrency">Currency</label>
+                            <select id="businessCurrency">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="CAD">CAD ($)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveBusinessInfo()">Save Changes</button>
+                        <button class="btn btn-secondary" onclick="resetBusinessInfo()">Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Hours Section -->
+            <div class="settings-section" id="business-hours">
+                <div class="section-header">
+                    <h3>Business Hours</h3>
+                    <p>Set your operating hours for each day of the week</p>
+                </div>
+                <div class="section-content">
+                    <div id="businessHoursContainer">
+                        <!-- Business hours will be populated by JavaScript -->
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveBusinessHours()">Save Hours</button>
+                        <button class="btn btn-secondary" onclick="copyToAllDays()">Copy Monday to All</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services Section -->
+            <div class="settings-section" id="services">
+                <div class="section-header">
+                    <h3>Services & Pricing</h3>
+                    <p>Manage your service offerings and pricing</p>
+                </div>
+                <div class="section-content">
+                    <button class="btn btn-primary" onclick="addNewService()" style="margin-bottom: 20px;">
+                        + Add New Service
+                    </button>
+
+                    <div id="servicesContainer">
+                        <!-- Services will be populated by JavaScript -->
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveServices()">Save All Services</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="settings-section" id="faq">
+                <div class="section-header">
+                    <h3>FAQ Responses</h3>
+                    <p>Customize responses to frequently asked questions</p>
+                </div>
+                <div class="section-content">
+                    <button class="btn btn-primary" onclick="addNewFAQ()" style="margin-bottom: 20px;">
+                        + Add New FAQ
+                    </button>
+
+                    <div id="faqContainer">
+                        <!-- FAQ items will be populated by JavaScript -->
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveFAQ()">Save FAQ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Industry Templates Section -->
+            <div class="settings-section" id="industry">
+                <div class="section-header">
+                    <h3>Industry Templates</h3>
+                    <p>Quick setup with pre-configured templates for your industry</p>
+                </div>
+                <div class="section-content">
+                    <div class="alert alert-warning">
+                        <strong>Warning:</strong> Applying a template will overwrite some of your current settings. Make sure to backup your configuration first.
+                    </div>
+
+                    <div class="industry-templates">
+                        <div class="industry-card" onclick="selectIndustry('salon')">
+                            <div class="industry-icon">💇</div>
+                            <div class="industry-name">Salon & Spa</div>
+                        </div>
+                        <div class="industry-card" onclick="selectIndustry('medical')">
+                            <div class="industry-icon">🏥</div>
+                            <div class="industry-name">Medical</div>
+                        </div>
+                        <div class="industry-card" onclick="selectIndustry('dental')">
+                            <div class="industry-icon">🦷</div>
+                            <div class="industry-name">Dental</div>
+                        </div>
+                        <div class="industry-card" onclick="selectIndustry('fitness')">
+                            <div class="industry-icon">💪</div>
+                            <div class="industry-name">Fitness</div>
+                        </div>
+                        <div class="industry-card" onclick="selectIndustry('restaurant')">
+                            <div class="industry-icon">🍽️</div>
+                            <div class="industry-name">Restaurant</div>
+                        </div>
+                        <div class="industry-card" onclick="selectIndustry('general')">
+                            <div class="industry-icon">🏢</div>
+                            <div class="industry-name">General</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="applyIndustryTemplate()" id="applyTemplateBtn" disabled>
+                            Apply Selected Template
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportConfig()">Export Current Config</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voice Settings Section -->
+            <div class="settings-section" id="voice">
+                <div class="section-header">
+                    <h3>Voice Settings</h3>
+                    <p>Configure voice input and output parameters</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable Voice Features</label>
+                            <div class="toggle-switch" id="voiceEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Auto-Speak Responses</label>
+                            <div class="toggle-switch" id="autoSpeakResponses" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="voiceRate">Voice Rate</label>
+                            <input type="range" id="voiceRate" min="0.5" max="2" step="0.1" value="0.9">
+                            <div class="form-help">Speed of speech (0.5 = slow, 2.0 = fast)</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="voicePitch">Voice Pitch</label>
+                            <input type="range" id="voicePitch" min="0" max="2" step="0.1" value="1.0">
+                            <div class="form-help">Pitch of voice (0 = low, 2.0 = high)</div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="voiceVolume">Voice Volume</label>
+                            <input type="range" id="voiceVolume" min="0" max="1" step="0.1" value="0.8">
+                            <div class="form-help">Volume level (0 = silent, 1.0 = max)</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceLanguage">Language</label>
+                            <select id="voiceLanguage">
+                                <option value="en-US">English (US)</option>
+                                <option value="en-GB">English (UK)</option>
+                                <option value="es-ES">Spanish</option>
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="it-IT">Italian</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveVoiceSettings()">Save Voice Settings</button>
+                        <button class="btn btn-secondary" onclick="testVoice()">Test Voice</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Automated Responses Section -->
+            <div class="settings-section" id="responses">
+                <div class="section-header">
+                    <h3>Automated Responses</h3>
+                    <p>Customize automatic messages and responses</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-group">
+                        <label for="greetingMessage">Greeting Message</label>
+                        <textarea id="greetingMessage" placeholder="Hello! Welcome to {business_name}. How can I help you today?"></textarea>
+                        <div class="form-help">Use {business_name} to insert your business name</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookingSuccessMessage">Booking Success Message</label>
+                        <textarea id="bookingSuccessMessage" placeholder="✅ Your appointment is confirmed!"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookingCancelledMessage">Booking Cancelled Message</label>
+                        <textarea id="bookingCancelledMessage" placeholder="No problem! Your appointment was not booked."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="outsideHoursMessage">Outside Hours Message</label>
+                        <textarea id="outsideHoursMessage" placeholder="Thank you for contacting us! We're currently closed."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="errorMessage">Error Message</label>
+                        <textarea id="errorMessage" placeholder="I'm sorry, I didn't understand that. Could you please rephrase?"></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveAutomatedResponses()">Save Responses</button>
+                        <button class="btn btn-secondary" onclick="resetToDefaults()">Reset to Defaults</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Integration Section -->
+            <div class="settings-section" id="calendar">
+                <div class="section-header">
+                    <h3>Google Calendar Integration</h3>
+                    <p>Connect with Google Calendar for automatic sync</p>
+                </div>
+                <div class="section-content">
+                    <div class="alert alert-warning">
+                        <strong>Setup Required:</strong> You need to create a Google Cloud project and enable the Calendar API. See the setup guide for details.
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable Calendar Integration</label>
+                            <div class="toggle-switch" id="calendarEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Auto Sync</label>
+                            <div class="toggle-switch" id="calendarAutoSync" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="calendarId">Calendar ID</label>
+                            <input type="text" id="calendarId" placeholder="primary" value="primary">
+                            <div class="form-help">Your Google Calendar ID (usually 'primary')</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="syncDirection">Sync Direction</label>
+                            <select id="syncDirection">
+                                <option value="both">Both Ways</option>
+                                <option value="to_calendar">To Calendar Only</option>
+                                <option value="from_calendar">From Calendar Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Conflict Detection</label>
+                        <div class="toggle-switch" id="conflictDetection" onclick="toggleSwitch(this)"></div>
+                        <div class="form-help">Prevent double-booking by checking existing events</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveCalendarSettings()">Save Calendar Settings</button>
+                        <button class="btn btn-secondary" onclick="testCalendarConnection()">Test Connection</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reminder Settings Section -->
+            <div class="settings-section" id="reminders">
+                <div class="section-header">
+                    <h3>Reminder Settings</h3>
+                    <p>Configure automated appointment reminders</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Email Reminders</label>
+                            <div class="toggle-switch" id="emailReminders" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>SMS Reminders</label>
+                            <div class="toggle-switch" id="smsReminders" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reminderHours">Reminder Times (hours before)</label>
+                        <input type="text" id="reminderHours" placeholder="24,2" value="24,2">
+                        <div class="form-help">Comma-separated hours (e.g., 24,2 for 24hrs and 2hrs before)</div>
+                    </div>
+
+                    <h4 style="margin: 30px 0 15px 0; color: #2d3748;">Email Configuration</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="smtpServer">SMTP Server</label>
+                            <input type="text" id="smtpServer" placeholder="smtp.gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtpPort">SMTP Port</label>
+                            <input type="number" id="smtpPort" placeholder="587" value="587">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="emailUser">Email Address</label>
+                            <input type="email" id="emailUser" placeholder="your-business@gmail.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="emailPassword">Email Password</label>
+                            <input type="password" id="emailPassword" placeholder="App Password">
+                            <div class="form-help">Use App Password for Gmail</div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveReminderSettings()">Save Reminder Settings</button>
+                        <button class="btn btn-secondary" onclick="testEmailSettings()">Test Email</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Channel Settings Section -->
+            <div class="settings-section" id="channels">
+                <div class="section-header">
+                    <h3>Multi-Channel Settings</h3>
+                    <p>Configure WhatsApp, SMS, Telegram, and other channels</p>
+                </div>
+                <div class="section-content">
+                    <!-- WhatsApp Settings -->
+                    <h4 style="margin: 0 0 15px 0; color: #2d3748;">WhatsApp (Twilio)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable WhatsApp</label>
+                            <div class="toggle-switch" id="whatsappEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="whatsappPhone">WhatsApp Number</label>
+                            <input type="text" id="whatsappPhone" placeholder="+1234567890">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="twilioAccountSid">Twilio Account SID</label>
+                            <input type="text" id="twilioAccountSid" placeholder="AC...">
+                        </div>
+                        <div class="form-group">
+                            <label for="twilioAuthToken">Twilio Auth Token</label>
+                            <input type="password" id="twilioAuthToken" placeholder="Auth Token">
+                        </div>
+                    </div>
+
+                    <!-- SMS Settings -->
+                    <h4 style="margin: 30px 0 15px 0; color: #2d3748;">SMS</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable SMS</label>
+                            <div class="toggle-switch" id="smsEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="smsPhone">SMS Number</label>
+                            <input type="text" id="smsPhone" placeholder="+1234567890">
+                        </div>
+                    </div>
+
+                    <!-- Telegram Settings -->
+                    <h4 style="margin: 30px 0 15px 0; color: #2d3748;">Telegram</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable Telegram</label>
+                            <div class="toggle-switch" id="telegramEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="telegramBotToken">Bot Token</label>
+                            <input type="password" id="telegramBotToken" placeholder="Bot Token from @BotFather">
+                        </div>
+                    </div>
+
+                    <!-- Facebook Messenger Settings -->
+                    <h4 style="margin: 30px 0 15px 0; color: #2d3748;">Facebook Messenger</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable Messenger</label>
+                            <div class="toggle-switch" id="messengerEnabled" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="messengerPageToken">Page Access Token</label>
+                            <input type="password" id="messengerPageToken" placeholder="Page Access Token">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="messengerVerifyToken">Verify Token</label>
+                            <input type="text" id="messengerVerifyToken" placeholder="Your custom verify token">
+                        </div>
+                        <div class="form-group">
+                            <label for="messengerAppSecret">App Secret</label>
+                            <input type="password" id="messengerAppSecret" placeholder="Facebook App Secret">
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveChannelSettings()">Save Channel Settings</button>
+                        <button class="btn btn-secondary" onclick="testChannels()">Test Connections</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Branding & Theme Section -->
+            <div class="settings-section" id="branding">
+                <div class="section-header">
+                    <h3>Branding & Theme</h3>
+                    <p>Customize the look and feel of your chat interface</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="logoUrl">Logo URL</label>
+                            <input type="url" id="logoUrl" placeholder="https://yourbusiness.com/logo.png">
+                            <div class="form-help">URL to your business logo</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="faviconUrl">Favicon URL</label>
+                            <input type="url" id="faviconUrl" placeholder="https://yourbusiness.com/favicon.ico">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="primaryColor">Primary Color</label>
+                            <input type="color" id="primaryColor" value="#667eea">
+                        </div>
+                        <div class="form-group">
+                            <label for="secondaryColor">Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#764ba2">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chatTheme">Chat Theme</label>
+                        <select id="chatTheme">
+                            <option value="default">Default</option>
+                            <option value="dark">Dark Mode</option>
+                            <option value="minimal">Minimal</option>
+                            <option value="professional">Professional</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customCSS">Custom CSS</label>
+                        <textarea id="customCSS" placeholder="/* Add your custom CSS here */" style="min-height: 150px; font-family: monospace;"></textarea>
+                        <div class="form-help">Advanced: Add custom CSS to override default styles</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveBrandingSettings()">Save Branding</button>
+                        <button class="btn btn-secondary" onclick="previewTheme()">Preview Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interface Settings Section -->
+            <div class="settings-section" id="ui">
+                <div class="section-header">
+                    <h3>Interface Settings</h3>
+                    <p>Configure chat behavior and user experience</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Show Typing Indicators</label>
+                            <div class="toggle-switch" id="showTyping" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Show Timestamps</label>
+                            <div class="toggle-switch" id="showTimestamps" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Enable Emoji Support</label>
+                            <div class="toggle-switch" id="enableEmojis" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Auto-scroll to Bottom</label>
+                            <div class="toggle-switch" id="autoScroll" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maxChatHistory">Max Chat History</label>
+                        <input type="number" id="maxChatHistory" placeholder="100" value="100">
+                        <div class="form-help">Maximum number of messages to keep in chat history</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="welcomeMessage">Welcome Message</label>
+                        <textarea id="welcomeMessage" placeholder="Welcome! How can I help you today?"></textarea>
+                        <div class="form-help">First message shown when chat starts</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveUISettings()">Save Interface Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings Section -->
+            <div class="settings-section" id="security">
+                <div class="section-header">
+                    <h3>Security Settings</h3>
+                    <p>Configure security and access controls</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rateLimitPerMinute">Rate Limit (per minute)</label>
+                            <input type="number" id="rateLimitPerMinute" placeholder="10" value="10">
+                            <div class="form-help">Maximum messages per user per minute</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="maxSessionDuration">Max Session Duration (minutes)</label>
+                            <input type="number" id="maxSessionDuration" placeholder="60" value="60">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Require Phone Verification</label>
+                            <div class="toggle-switch" id="requireVerification" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="adminPassword">Admin Password</label>
+                            <input type="password" id="adminPassword" placeholder="Set admin password">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="blockedCountries">Blocked Countries</label>
+                        <input type="text" id="blockedCountries" placeholder="CN,RU (comma-separated country codes)">
+                        <div class="form-help">Block traffic from specific countries (optional)</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveSecuritySettings()">Save Security Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Manager Section -->
+            <div class="settings-section" id="appointments">
+                <div class="section-header">
+                    <h3>Appointment Manager</h3>
+                    <p>Manage appointments and update their status</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentSearch">Search Appointments</label>
+                            <input type="text" id="appointmentSearch" placeholder="Search by name, phone, or service" onkeyup="filterAppointments()">
+                        </div>
+                        <div class="form-group">
+                            <label for="statusFilter">Filter by Status</label>
+                            <select id="statusFilter" onchange="filterAppointments()">
+                                <option value="">All Statuses</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="no-show">No Show</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="btn-group" style="margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="loadAppointments()">Refresh Appointments</button>
+                        <button class="btn btn-secondary" onclick="exportAppointments()">Export to CSV</button>
+                    </div>
+
+                    <div id="appointmentsContainer">
+                        <p>Loading appointments...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports & Analytics Section -->
+            <div class="settings-section" id="reports">
+                <div class="section-header">
+                    <h3>Reports & Analytics</h3>
+                    <p>View detailed reports and statistics</p>
+                </div>
+                <div class="section-content">
+                    <!-- Date Range Selector -->
+                    <div class="form-row" style="margin-bottom: 30px;">
+                        <div class="form-group">
+                            <label for="reportStartDate">Start Date</label>
+                            <input type="date" id="reportStartDate" onchange="updateReports()">
+                        </div>
+                        <div class="form-group">
+                            <label for="reportEndDate">End Date</label>
+                            <input type="date" id="reportEndDate" onchange="updateReports()">
+                        </div>
+                    </div>
+
+                    <div class="btn-group" style="margin-bottom: 30px;">
+                        <button class="btn btn-secondary" onclick="setDateRange('today')">Today</button>
+                        <button class="btn btn-secondary" onclick="setDateRange('week')">This Week</button>
+                        <button class="btn btn-secondary" onclick="setDateRange('month')">This Month</button>
+                        <button class="btn btn-secondary" onclick="setDateRange('year')">This Year</button>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid" id="reportStats">
+                        <div class="stat-card">
+                            <h3 id="totalAppointments">-</h3>
+                            <p>Total Appointments</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="completedAppointments">-</h3>
+                            <p>Completed</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="cancelledAppointments">-</h3>
+                            <p>Cancelled</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="noShowAppointments">-</h3>
+                            <p>No Shows</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="completionRate">-</h3>
+                            <p>Completion Rate</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3 id="totalRevenue">-</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Detailed Reports -->
+                    <div class="report-section">
+                        <h4>Appointment Status Breakdown</h4>
+                        <div id="statusChart" class="chart-container">
+                            <canvas id="statusPieChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>Appointments by Service</h4>
+                        <div id="serviceReport" class="service-breakdown">
+                            <!-- Service breakdown will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <h4>Peak Hours Analysis</h4>
+                        <div id="peakHoursReport">
+                            <!-- Peak hours analysis will be populated here -->
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="exportReport()">Export Report</button>
+                        <button class="btn btn-secondary" onclick="printReport()">Print Report</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="settings-section" id="analytics">
+                <div class="section-header">
+                    <h3>Analytics Settings</h3>
+                    <p>Configure analytics and tracking</p>
+                </div>
+                <div class="section-content">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Track Conversations</label>
+                            <div class="toggle-switch" id="trackConversations" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Track Appointments</label>
+                            <div class="toggle-switch" id="trackAppointments" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="googleAnalyticsId">Google Analytics ID</label>
+                        <input type="text" id="googleAnalyticsId" placeholder="GA-XXXXXXXXX-X">
+                        <div class="form-help">Optional: Google Analytics tracking ID</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataRetentionDays">Data Retention (days)</label>
+                        <input type="number" id="dataRetentionDays" placeholder="365" value="365">
+                        <div class="form-help">How long to keep chat and appointment data</div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-primary" onclick="saveAnalyticsSettings()">Save Analytics Settings</button>
+                        <button class="btn btn-secondary" onclick="exportAnalytics()">Export Data</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentConfig = {};
+        let selectedIndustry = null;
+
+        // Initialize the admin interface
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentConfig();
+            setupEventListeners();
+        });
+
+        // Navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked menu item
+            event.target.classList.add('active');
+        }
+
+        // Load current configuration
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch('/admin/settings/data');
+                currentConfig = await response.json();
+                populateFormFields();
+            } catch (error) {
+                showAlert('Error loading configuration', 'error');
+            }
+        }
+
+        // Populate form fields with current config
+        function populateFormFields() {
+            const businessInfo = currentConfig.business?.info || {};
+
+            // Business Information
+            document.getElementById('businessName').value = businessInfo.name || '';
+            document.getElementById('businessPhone').value = businessInfo.phone || '';
+            document.getElementById('businessEmail').value = businessInfo.email || '';
+            document.getElementById('businessWebsite').value = businessInfo.website || '';
+            document.getElementById('businessAddress').value = businessInfo.address || '';
+            document.getElementById('businessTimezone').value = businessInfo.timezone || 'America/New_York';
+            document.getElementById('businessCurrency').value = businessInfo.currency || 'USD';
+
+            // Populate other sections
+            populateBusinessHours();
+            populateServices();
+            populateFAQ();
+        }
+
+        // Business Hours
+        function populateBusinessHours() {
+            const hours = currentConfig.business?.hours || {};
+            const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            const container = document.getElementById('businessHoursContainer');
+
+            container.innerHTML = '';
+
+            daysOfWeek.forEach(day => {
+                const dayCapitalized = day.charAt(0).toUpperCase() + day.slice(1);
+                const hourValue = hours[day] || '9:00 AM - 6:00 PM';
+
+                const dayRow = document.createElement('div');
+                dayRow.className = 'form-row';
+                dayRow.innerHTML = `
+                    <div class="form-group">
+                        <label for="hours_${day}">${dayCapitalized}</label>
+                        <input type="text" id="hours_${day}" value="${hourValue}"
+                               placeholder="9:00 AM - 6:00 PM or 'Closed'">
+                        <div class="form-help">Format: "9:00 AM - 6:00 PM" or "Closed"</div>
+                    </div>
+                `;
+                container.appendChild(dayRow);
+            });
+        }
+
+        // Services
+        function populateServices() {
+            const services = currentConfig.business?.services || [];
+            const container = document.getElementById('servicesContainer');
+
+            container.innerHTML = '';
+
+            services.forEach((service, index) => {
+                addServiceToDOM(service, index);
+            });
+        }
+
+        function addServiceToDOM(service = {}, index = null) {
+            const container = document.getElementById('servicesContainer');
+            const serviceDiv = document.createElement('div');
+            serviceDiv.className = 'service-item';
+            serviceDiv.innerHTML = `
+                <div class="service-header">
+                    <div class="service-name">Service ${index !== null ? index + 1 : container.children.length + 1}</div>
+                    <div class="service-actions">
+                        <button class="btn btn-danger btn-sm" onclick="removeService(this)">Remove</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Service Name</label>
+                        <input type="text" class="service-name-input" value="${service.name || ''}" placeholder="e.g. Haircut">
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="text" class="service-price-input" value="${service.price || ''}" placeholder="e.g. $30+">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <input type="text" class="service-duration-input" value="${service.duration || ''}" placeholder="e.g. 45 minutes">
+                </div>
+            `;
+            container.appendChild(serviceDiv);
+        }
+
+        function addNewService() {
+            addServiceToDOM();
+        }
+
+        function removeService(button) {
+            button.closest('.service-item').remove();
+        }
+
+        // FAQ
+        function populateFAQ() {
+            const faq = currentConfig.conversation?.faq_responses || {};
+            const container = document.getElementById('faqContainer');
+
+            container.innerHTML = '';
+
+            Object.entries(faq).forEach(([key, response]) => {
+                addFAQToDOM(key, response);
+            });
+        }
+
+        function addFAQToDOM(key = '', response = '') {
+            const container = document.getElementById('faqContainer');
+            const faqDiv = document.createElement('div');
+            faqDiv.className = 'faq-item';
+            faqDiv.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Question Keyword</label>
+                        <input type="text" class="faq-key-input" value="${key}" placeholder="e.g. hours, location, prices">
+                    </div>
+                    <div style="display: flex; align-items: end;">
+                        <button class="btn btn-danger btn-sm" onclick="removeFAQ(this)">Remove</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Response</label>
+                    <textarea class="faq-response-input" placeholder="The response to give when this keyword is mentioned">${response}</textarea>
+                </div>
+            `;
+            container.appendChild(faqDiv);
+        }
+
+        function addNewFAQ() {
+            addFAQToDOM();
+        }
+
+        function removeFAQ(button) {
+            button.closest('.faq-item').remove();
+        }
+
+        // Save functions
+        async function saveBusinessInfo() {
+            const businessInfo = {
+                name: document.getElementById('businessName').value,
+                phone: document.getElementById('businessPhone').value,
+                email: document.getElementById('businessEmail').value,
+                website: document.getElementById('businessWebsite').value,
+                address: document.getElementById('businessAddress').value,
+                timezone: document.getElementById('businessTimezone').value,
+                currency: document.getElementById('businessCurrency').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/business', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(businessInfo)
+                });
+
+                if (response.ok) {
+                    showAlert('Business information saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving business information', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving business information', 'error');
+            }
+        }
+
+        async function saveBusinessHours() {
+            const hours = {};
+            const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            daysOfWeek.forEach(day => {
+                hours[day] = document.getElementById(`hours_${day}`).value;
+            });
+
+            try {
+                const response = await fetch('/admin/settings/hours', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(hours)
+                });
+
+                if (response.ok) {
+                    showAlert('Business hours saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving business hours', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving business hours', 'error');
+            }
+        }
+
+        async function saveServices() {
+            const services = [];
+            const serviceItems = document.querySelectorAll('.service-item');
+
+            serviceItems.forEach(item => {
+                const name = item.querySelector('.service-name-input').value;
+                const price = item.querySelector('.service-price-input').value;
+                const duration = item.querySelector('.service-duration-input').value;
+
+                if (name && price && duration) {
+                    services.push({ name, price, duration });
+                }
+            });
+
+            try {
+                const response = await fetch('/admin/settings/services', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(services)
+                });
+
+                if (response.ok) {
+                    showAlert('Services saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving services', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving services', 'error');
+            }
+        }
+
+        async function saveFAQ() {
+            const faq = {};
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const key = item.querySelector('.faq-key-input').value;
+                const response = item.querySelector('.faq-response-input').value;
+
+                if (key && response) {
+                    faq[key] = response;
+                }
+            });
+
+            try {
+                const response = await fetch('/admin/settings/faq', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(faq)
+                });
+
+                if (response.ok) {
+                    showAlert('FAQ saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving FAQ', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving FAQ', 'error');
+            }
+        }
+
+        // Industry Templates
+        function selectIndustry(industry) {
+            selectedIndustry = industry;
+
+            // Update UI
+            document.querySelectorAll('.industry-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            event.target.closest('.industry-card').classList.add('selected');
+            document.getElementById('applyTemplateBtn').disabled = false;
+        }
+
+        async function applyIndustryTemplate() {
+            if (!selectedIndustry) return;
+
+            if (!confirm('This will overwrite some of your current settings. Are you sure?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/settings/industry-template', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ industry: selectedIndustry })
+                });
+
+                if (response.ok) {
+                    showAlert('Industry template applied successfully!', 'success');
+                    loadCurrentConfig(); // Reload to show new settings
+                } else {
+                    showAlert('Error applying industry template', 'error');
+                }
+            } catch (error) {
+                showAlert('Error applying industry template', 'error');
+            }
+        }
+
+        // Utility functions
+        function copyToAllDays() {
+            const mondayValue = document.getElementById('hours_monday').value;
+            const daysOfWeek = ['tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+            daysOfWeek.forEach(day => {
+                document.getElementById(`hours_${day}`).value = mondayValue;
+            });
+
+            showAlert('Monday hours copied to all other days', 'success');
+        }
+
+        function resetBusinessInfo() {
+            if (confirm('Are you sure you want to reset all business information?')) {
+                document.getElementById('businessName').value = '';
+                document.getElementById('businessPhone').value = '';
+                document.getElementById('businessEmail').value = '';
+                document.getElementById('businessWebsite').value = '';
+                document.getElementById('businessAddress').value = '';
+                document.getElementById('businessTimezone').value = 'America/New_York';
+                document.getElementById('businessCurrency').value = 'USD';
+            }
+        }
+
+        async function exportConfig() {
+            try {
+                const response = await fetch('/admin/settings/export');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `ai_agent_config_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                showAlert('Configuration exported successfully!', 'success');
+            } catch (error) {
+                showAlert('Error exporting configuration', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+
+            alertContainer.appendChild(alertDiv);
+
+            // Remove alert after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function setupEventListeners() {
+            // Add any additional event listeners here
+        }
+
+        // Toggle switch functionality
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        // Voice Settings Functions
+        async function saveVoiceSettings() {
+            const voiceSettings = {
+                enabled: document.getElementById('voiceEnabled').classList.contains('active'),
+                auto_speak_responses: document.getElementById('autoSpeakResponses').classList.contains('active'),
+                voice_rate: parseFloat(document.getElementById('voiceRate').value),
+                voice_pitch: parseFloat(document.getElementById('voicePitch').value),
+                voice_volume: parseFloat(document.getElementById('voiceVolume').value),
+                language: document.getElementById('voiceLanguage').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/voice', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(voiceSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Voice settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving voice settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving voice settings', 'error');
+            }
+        }
+
+        function testVoice() {
+            const message = 'This is a test of your voice settings.';
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.rate = parseFloat(document.getElementById('voiceRate').value);
+            utterance.pitch = parseFloat(document.getElementById('voicePitch').value);
+            utterance.volume = parseFloat(document.getElementById('voiceVolume').value);
+            utterance.lang = document.getElementById('voiceLanguage').value;
+            speechSynthesis.speak(utterance);
+        }
+
+        // Automated Responses Functions
+        async function saveAutomatedResponses() {
+            const responses = {
+                greeting: document.getElementById('greetingMessage').value,
+                booking_success: document.getElementById('bookingSuccessMessage').value,
+                booking_cancelled: document.getElementById('bookingCancelledMessage').value,
+                outside_hours: document.getElementById('outsideHoursMessage').value,
+                error: document.getElementById('errorMessage').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/responses', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(responses)
+                });
+
+                if (response.ok) {
+                    showAlert('Automated responses saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving responses', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving responses', 'error');
+            }
+        }
+
+        function resetToDefaults() {
+            if (confirm('Reset all responses to default values?')) {
+                document.getElementById('greetingMessage').value = 'Hello! Welcome to {business_name}. How can I help you today?';
+                document.getElementById('bookingSuccessMessage').value = '✅ Your appointment is confirmed!';
+                document.getElementById('bookingCancelledMessage').value = 'No problem! Your appointment was not booked.';
+                document.getElementById('outsideHoursMessage').value = 'Thank you for contacting us! We\'re currently closed.';
+                document.getElementById('errorMessage').value = 'I\'m sorry, I didn\'t understand that. Could you please rephrase?';
+            }
+        }
+
+        // Calendar Settings Functions
+        async function saveCalendarSettings() {
+            const calendarSettings = {
+                enabled: document.getElementById('calendarEnabled').classList.contains('active'),
+                calendar_id: document.getElementById('calendarId').value,
+                sync_direction: document.getElementById('syncDirection').value,
+                auto_sync: document.getElementById('calendarAutoSync').classList.contains('active'),
+                conflict_detection: document.getElementById('conflictDetection').classList.contains('active')
+            };
+
+            try {
+                const response = await fetch('/admin/settings/calendar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(calendarSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Calendar settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving calendar settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving calendar settings', 'error');
+            }
+        }
+
+        async function testCalendarConnection() {
+            try {
+                const response = await fetch('/admin/settings/calendar/test', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showAlert('Calendar connection successful!', 'success');
+                } else {
+                    showAlert('Calendar connection failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Error testing calendar connection', 'error');
+            }
+        }
+
+        // Reminder Settings Functions
+        async function saveReminderSettings() {
+            const reminderSettings = {
+                email_enabled: document.getElementById('emailReminders').classList.contains('active'),
+                sms_enabled: document.getElementById('smsReminders').classList.contains('active'),
+                reminder_hours: document.getElementById('reminderHours').value.split(',').map(h => parseInt(h.trim())),
+                smtp_server: document.getElementById('smtpServer').value,
+                smtp_port: parseInt(document.getElementById('smtpPort').value),
+                email_user: document.getElementById('emailUser').value,
+                email_password: document.getElementById('emailPassword').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/reminders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reminderSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Reminder settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving reminder settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving reminder settings', 'error');
+            }
+        }
+
+        async function testEmailSettings() {
+            try {
+                const response = await fetch('/admin/settings/email/test', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showAlert('Test email sent successfully!', 'success');
+                } else {
+                    showAlert('Email test failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Error testing email settings', 'error');
+            }
+        }
+
+        // Channel Settings Functions
+        async function saveChannelSettings() {
+            const channelSettings = {
+                whatsapp: {
+                    enabled: document.getElementById('whatsappEnabled').classList.contains('active'),
+                    provider: 'twilio',
+                    account_sid: document.getElementById('twilioAccountSid').value,
+                    auth_token: document.getElementById('twilioAuthToken').value,
+                    phone_number: document.getElementById('whatsappPhone').value
+                },
+                sms: {
+                    enabled: document.getElementById('smsEnabled').classList.contains('active'),
+                    provider: 'twilio',
+                    account_sid: document.getElementById('twilioAccountSid').value,
+                    auth_token: document.getElementById('twilioAuthToken').value,
+                    phone_number: document.getElementById('smsPhone').value
+                },
+                telegram: {
+                    enabled: document.getElementById('telegramEnabled').classList.contains('active'),
+                    bot_token: document.getElementById('telegramBotToken').value
+                },
+                messenger: {
+                    enabled: document.getElementById('messengerEnabled').classList.contains('active'),
+                    page_access_token: document.getElementById('messengerPageToken').value,
+                    verify_token: document.getElementById('messengerVerifyToken').value,
+                    app_secret: document.getElementById('messengerAppSecret').value
+                }
+            };
+
+            try {
+                const response = await fetch('/admin/settings/channels', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(channelSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Channel settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving channel settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving channel settings', 'error');
+            }
+        }
+
+        async function testChannels() {
+            try {
+                const response = await fetch('/admin/settings/channels/test', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showAlert('Channel connections tested successfully!', 'success');
+                } else {
+                    showAlert('Some channel tests failed', 'warning');
+                }
+            } catch (error) {
+                showAlert('Error testing channels', 'error');
+            }
+        }
+
+        // Branding Settings Functions
+        async function saveBrandingSettings() {
+            const brandingSettings = {
+                logo_url: document.getElementById('logoUrl').value,
+                favicon_url: document.getElementById('faviconUrl').value,
+                primary_color: document.getElementById('primaryColor').value,
+                secondary_color: document.getElementById('secondaryColor').value,
+                theme: document.getElementById('chatTheme').value,
+                custom_css: document.getElementById('customCSS').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/ui', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(brandingSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Branding settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving branding settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving branding settings', 'error');
+            }
+        }
+
+        function previewTheme() {
+            const primaryColor = document.getElementById('primaryColor').value;
+            const secondaryColor = document.getElementById('secondaryColor').value;
+
+            // Apply preview colors
+            document.documentElement.style.setProperty('--primary-color', primaryColor);
+            document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+
+            showAlert('Theme preview applied! Save to make permanent.', 'success');
+        }
+
+        // UI Settings Functions
+        async function saveUISettings() {
+            const uiSettings = {
+                show_typing: document.getElementById('showTyping').classList.contains('active'),
+                show_timestamps: document.getElementById('showTimestamps').classList.contains('active'),
+                enable_emojis: document.getElementById('enableEmojis').classList.contains('active'),
+                auto_scroll: document.getElementById('autoScroll').classList.contains('active'),
+                max_chat_history: parseInt(document.getElementById('maxChatHistory').value),
+                welcome_message: document.getElementById('welcomeMessage').value
+            };
+
+            try {
+                const response = await fetch('/admin/settings/ui', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(uiSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Interface settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving interface settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving interface settings', 'error');
+            }
+        }
+
+        // Security Settings Functions
+        async function saveSecuritySettings() {
+            const securitySettings = {
+                rate_limit_per_minute: parseInt(document.getElementById('rateLimitPerMinute').value),
+                max_session_duration: parseInt(document.getElementById('maxSessionDuration').value) * 60,
+                require_verification: document.getElementById('requireVerification').classList.contains('active'),
+                admin_password: document.getElementById('adminPassword').value,
+                blocked_countries: document.getElementById('blockedCountries').value.split(',').map(c => c.trim())
+            };
+
+            try {
+                const response = await fetch('/admin/settings/security', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(securitySettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Security settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving security settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving security settings', 'error');
+            }
+        }
+
+        // Analytics Settings Functions
+        async function saveAnalyticsSettings() {
+            const analyticsSettings = {
+                google_analytics_id: document.getElementById('googleAnalyticsId').value,
+                track_conversations: document.getElementById('trackConversations').classList.contains('active'),
+                track_appointments: document.getElementById('trackAppointments').classList.contains('active'),
+                data_retention_days: parseInt(document.getElementById('dataRetentionDays').value)
+            };
+
+            try {
+                const response = await fetch('/admin/settings/analytics', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(analyticsSettings)
+                });
+
+                if (response.ok) {
+                    showAlert('Analytics settings saved successfully!', 'success');
+                } else {
+                    showAlert('Error saving analytics settings', 'error');
+                }
+            } catch (error) {
+                showAlert('Error saving analytics settings', 'error');
+            }
+        }
+
+        async function exportAnalytics() {
+            try {
+                const response = await fetch('/admin/analytics/export');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `analytics_export_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                showAlert('Analytics data exported successfully!', 'success');
+            } catch (error) {
+                showAlert('Error exporting analytics data', 'error');
+            }
+        }
+
+        // Enhanced populate form fields to handle all new sections
+        function populateFormFields() {
+            const businessInfo = currentConfig.business?.info || {};
+
+            // Business Information
+            document.getElementById('businessName').value = businessInfo.name || '';
+            document.getElementById('businessPhone').value = businessInfo.phone || '';
+            document.getElementById('businessEmail').value = businessInfo.email || '';
+            document.getElementById('businessWebsite').value = businessInfo.website || '';
+            document.getElementById('businessAddress').value = businessInfo.address || '';
+            document.getElementById('businessTimezone').value = businessInfo.timezone || 'America/New_York';
+            document.getElementById('businessCurrency').value = businessInfo.currency || 'USD';
+
+            // Voice Settings
+            const voiceSettings = currentConfig.conversation?.voice_settings || {};
+            if (voiceSettings.enabled) document.getElementById('voiceEnabled').classList.add('active');
+            if (voiceSettings.auto_speak_responses) document.getElementById('autoSpeakResponses').classList.add('active');
+            document.getElementById('voiceRate').value = voiceSettings.voice_rate || 0.9;
+            document.getElementById('voicePitch').value = voiceSettings.voice_pitch || 1.0;
+            document.getElementById('voiceVolume').value = voiceSettings.voice_volume || 0.8;
+            document.getElementById('voiceLanguage').value = voiceSettings.language || 'en-US';
+
+            // Automated Responses
+            const responses = currentConfig.conversation?.automated_responses || {};
+            document.getElementById('greetingMessage').value = responses.greeting || '';
+            document.getElementById('bookingSuccessMessage').value = responses.booking_success || '';
+            document.getElementById('bookingCancelledMessage').value = responses.booking_cancelled || '';
+            document.getElementById('outsideHoursMessage').value = responses.outside_hours || '';
+            document.getElementById('errorMessage').value = responses.error || '';
+
+            // Calendar Settings
+            const calendarSettings = currentConfig.integrations?.calendar || {};
+            if (calendarSettings.enabled) document.getElementById('calendarEnabled').classList.add('active');
+            if (calendarSettings.auto_sync) document.getElementById('calendarAutoSync').classList.add('active');
+            if (calendarSettings.conflict_detection) document.getElementById('conflictDetection').classList.add('active');
+            document.getElementById('calendarId').value = calendarSettings.calendar_id || 'primary';
+            document.getElementById('syncDirection').value = calendarSettings.sync_direction || 'both';
+
+            // Continue with other sections...
+            populateBusinessHours();
+            populateServices();
+            populateFAQ();
+        }
+
+        // Appointment Management Functions
+        let allAppointments = [];
+        let filteredAppointments = [];
+
+        async function loadAppointments() {
+            try {
+                const response = await fetch('/appointments');
+                const data = await response.json();
+                allAppointments = data.appointments || [];
+                filteredAppointments = [...allAppointments];
+                displayAppointments();
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                showAlert('Error loading appointments', 'error');
+            }
+        }
+
+        function displayAppointments() {
+            const container = document.getElementById('appointmentsContainer');
+
+            if (filteredAppointments.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">No appointments found.</p>';
+                return;
+            }
+
+            container.innerHTML = filteredAppointments.map(appointment => `
+                <div class="appointment-item" data-id="${appointment.id}">
+                    <div class="appointment-details">
+                        <div class="appointment-field">
+                            <label>Patient/Client</label>
+                            <span>${appointment.name || 'N/A'}</span>
+                        </div>
+                        <div class="appointment-field">
+                            <label>Phone</label>
+                            <span>${appointment.phone || 'N/A'}</span>
+                        </div>
+                        <div class="appointment-field">
+                            <label>Service</label>
+                            <span>${appointment.service || 'N/A'}</span>
+                        </div>
+                        <div class="appointment-field">
+                            <label>Date</label>
+                            <span>${appointment.date || 'N/A'}</span>
+                        </div>
+                        <div class="appointment-field">
+                            <label>Time</label>
+                            <span>${appointment.time || 'N/A'}</span>
+                        </div>
+                        <div class="appointment-field">
+                            <label>Notes</label>
+                            <span>${appointment.notes || 'No notes'}</span>
+                        </div>
+                    </div>
+                    <div class="appointment-actions">
+                        <select class="status-select" onchange="updateAppointmentStatus('${appointment.id}', this.value)" data-current="${appointment.status}">
+                            <option value="confirmed" ${appointment.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                            <option value="completed" ${appointment.status === 'completed' ? 'selected' : ''}>Completed</option>
+                            <option value="cancelled" ${appointment.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            <option value="no-show" ${appointment.status === 'no-show' ? 'selected' : ''}>No Show</option>
+                        </select>
+                        <div class="status-indicator status-${appointment.status}">${appointment.status || 'confirmed'}</div>
+                        <button class="btn btn-danger btn-sm" onclick="deleteAppointment('${appointment.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function updateAppointmentStatus(appointmentId, newStatus) {
+            try {
+                const response = await fetch(`/appointments/${appointmentId}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (response.ok) {
+                    showAlert('Appointment status updated successfully!', 'success');
+
+                    // Update local data
+                    const appointmentIndex = allAppointments.findIndex(apt => apt.id === appointmentId);
+                    if (appointmentIndex !== -1) {
+                        allAppointments[appointmentIndex].status = newStatus;
+                    }
+
+                    // Refresh filtered appointments if necessary
+                    filterAppointments();
+                    updateReports();
+                } else {
+                    showAlert('Error updating appointment status', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating appointment status:', error);
+                showAlert('Error updating appointment status', 'error');
+            }
+        }
+
+        async function deleteAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to delete this appointment?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/appointments/${appointmentId}/cancel`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    showAlert('Appointment deleted successfully!', 'success');
+                    loadAppointments();
+                    updateReports();
+                } else {
+                    showAlert('Error deleting appointment', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting appointment:', error);
+                showAlert('Error deleting appointment', 'error');
+            }
+        }
+
+        function filterAppointments() {
+            const searchTerm = document.getElementById('appointmentSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            filteredAppointments = allAppointments.filter(appointment => {
+                const matchesSearch = !searchTerm ||
+                    (appointment.name && appointment.name.toLowerCase().includes(searchTerm)) ||
+                    (appointment.phone && appointment.phone.includes(searchTerm)) ||
+                    (appointment.service && appointment.service.toLowerCase().includes(searchTerm));
+
+                const matchesStatus = !statusFilter || appointment.status === statusFilter;
+
+                return matchesSearch && matchesStatus;
+            });
+
+            displayAppointments();
+        }
+
+        async function exportAppointments() {
+            try {
+                const response = await fetch('/admin/appointments/export');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `appointments_export_${new Date().toISOString().split('T')[0]}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                showAlert('Appointments exported successfully!', 'success');
+            } catch (error) {
+                showAlert('Error exporting appointments', 'error');
+            }
+        }
+
+        // Reports Functions
+        let currentReportData = {};
+
+        function setDateRange(period) {
+            const endDate = new Date();
+            let startDate = new Date();
+
+            switch (period) {
+                case 'today':
+                    startDate = new Date();
+                    break;
+                case 'week':
+                    startDate.setDate(endDate.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate.setMonth(endDate.getMonth() - 1);
+                    break;
+                case 'year':
+                    startDate.setFullYear(endDate.getFullYear() - 1);
+                    break;
+            }
+
+            document.getElementById('reportStartDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('reportEndDate').value = endDate.toISOString().split('T')[0];
+            updateReports();
+        }
+
+        async function updateReports() {
+            const startDate = document.getElementById('reportStartDate').value;
+            const endDate = document.getElementById('reportEndDate').value;
+
+            try {
+                const response = await fetch(`/admin/reports?start=${startDate}&end=${endDate}`);
+                const data = await response.json();
+                currentReportData = data;
+                displayReports(data);
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showAlert('Error loading reports', 'error');
+            }
+        }
+
+        function displayReports(data) {
+            // Update statistics cards
+            document.getElementById('totalAppointments').textContent = data.total_appointments || 0;
+            document.getElementById('completedAppointments').textContent = data.completed_appointments || 0;
+            document.getElementById('cancelledAppointments').textContent = data.cancelled_appointments || 0;
+            document.getElementById('noShowAppointments').textContent = data.no_show_appointments || 0;
+            document.getElementById('completionRate').textContent = `${data.completion_rate || 0}%`;
+            document.getElementById('totalRevenue').textContent = `$${data.total_revenue || 0}`;
+
+            // Update service breakdown
+            const serviceContainer = document.getElementById('serviceReport');
+            if (data.services_breakdown) {
+                serviceContainer.innerHTML = data.services_breakdown.map(service => `
+                    <div class="service-item">
+                        <div class="service-name">${service.name}</div>
+                        <div class="service-stats">
+                            <div class="service-stat">
+                                <div class="service-stat-value">${service.count}</div>
+                                <div class="service-stat-label">Appointments</div>
+                            </div>
+                            <div class="service-stat">
+                                <div class="service-stat-value">$${service.revenue}</div>
+                                <div class="service-stat-label">Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Update peak hours
+            const peakHoursContainer = document.getElementById('peakHoursReport');
+            if (data.peak_hours) {
+                peakHoursContainer.innerHTML = `
+                    <div class="peak-hours-grid">
+                        ${data.peak_hours.map(hour => `
+                            <div class="hour-slot ${hour.isPeak ? 'peak' : ''}">
+                                <div class="hour-time">${hour.time}</div>
+                                <div class="hour-count">${hour.count} appointments</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Update chart (simplified without chart library)
+            updateStatusChart(data);
+        }
+
+        function updateStatusChart(data) {
+            const canvas = document.getElementById('statusPieChart');
+            const ctx = canvas.getContext('2d');
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Simple bar chart
+            const statuses = ['completed', 'cancelled', 'no-show', 'confirmed'];
+            const colors = ['#10b981', '#ef4444', '#f59e0b', '#667eea'];
+            const values = [
+                data.completed_appointments || 0,
+                data.cancelled_appointments || 0,
+                data.no_show_appointments || 0,
+                (data.total_appointments || 0) - (data.completed_appointments || 0) - (data.cancelled_appointments || 0) - (data.no_show_appointments || 0)
+            ];
+
+            const maxValue = Math.max(...values);
+            const barWidth = 60;
+            const barSpacing = 20;
+            const chartHeight = 150;
+
+            statuses.forEach((status, index) => {
+                const barHeight = maxValue > 0 ? (values[index] / maxValue) * chartHeight : 0;
+                const x = 50 + (barWidth + barSpacing) * index;
+                const y = 200 - barHeight;
+
+                // Draw bar
+                ctx.fillStyle = colors[index];
+                ctx.fillRect(x, y, barWidth, barHeight);
+
+                // Draw label
+                ctx.fillStyle = '#374151';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(status, x + barWidth/2, 220);
+                ctx.fillText(values[index], x + barWidth/2, y - 5);
+            });
+        }
+
+        async function exportReport() {
+            try {
+                const startDate = document.getElementById('reportStartDate').value;
+                const endDate = document.getElementById('reportEndDate').value;
+
+                const response = await fetch(`/admin/reports/export?start=${startDate}&end=${endDate}`);
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = `report_${startDate}_to_${endDate}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                showAlert('Report exported successfully!', 'success');
+            } catch (error) {
+                showAlert('Error exporting report', 'error');
+            }
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        // Initialize reports and appointments when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCurrentConfig();
+            setupEventListeners();
+
+            // Set default date range to this month
+            setDateRange('month');
+
+            // Load appointments
+            loadAppointments();
+        });
+    </script>
+</body>
+</html>
