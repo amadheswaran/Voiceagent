@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call/Text Agent Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .chat-simulator {
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .phone-input {
+            margin-bottom: 15px;
+        }
+        
+        .phone-input input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            max-height: 350px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+        
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .agent-message {
+            background: #f1f3f4;
+            color: #333;
+        }
+        
+        .message-input {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .message-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .send-btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .appointments-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .appointment-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .appointment-id {
+            font-size: 0.9em;
+            color: #666;
+            font-family: monospace;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .appointment-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .cancel-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-top: 10px;
+        }
+        
+        .cancel-btn:hover {
+            background: #c82333;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .quick-tests {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .quick-test-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .quick-test-btn:hover {
+            background: #218838;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-tests {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📞 Call/Text Agent Manager</h1>
+            <p>Test and manage your automated customer service agent</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="section">
+                <h2>💬 Chat Simulator</h2>
+                <div class="chat-simulator">
+                    <div class="phone-input">
+                        <input type="text" id="phoneNumber" placeholder="Enter phone number (e.g., 555-0123)" value="555-0123">
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message agent-message">
+                            Welcome! Start a conversation to test the agent.
+                        </div>
+                    </div>
+                    
+                    <div class="message-input">
+                        <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                    
+                    <div class="quick-tests">
+                        <button class="quick-test-btn" onclick="quickTest('Hello')">👋 Greeting</button>
+                        <button class="quick-test-btn" onclick="quickTest('book appointment')">📅 Book</button>
+                        <button class="quick-test-btn" onclick="quickTest('hours')">🕐 Hours</button>
+                        <button class="quick-test-btn" onclick="quickTest('prices')">💰 Prices</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>📊 Dashboard</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalSessions">0</div>
+                        <div class="stat-label">Total Sessions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalAppointments">0</div>
+                        <div class="stat-label">Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="conversionRate">0%</div>
+                        <div class="stat-label">Conversion Rate</div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 15px;">📋 Recent Appointments</h3>
+                <div class="appointments-list" id="appointmentsList">
+                    <div style="text-align: center; color: #666; font-style: italic;">
+                        No appointments yet. Test the booking flow!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock agent implementation for demo purposes
+        class MockAgent {
+            constructor() {
+                this.sessions = new Map();
+                this.appointments = [];
+                this.faq = {
+                    'hours': 'We are open Monday-Friday 9AM-6PM, Saturday 10AM-4PM. Closed Sundays.',
+                    'location': 'We\'re located at 123 Main Street, Downtown. Free parking available.',
+                    'services': 'We offer haircuts, styling, coloring, treatments, and special event styling.',
+                    'prices': 'Haircuts start at $30, styling from $25, coloring from $60. Call for detailed pricing.',
+                    'cancellation': 'Please give us 24 hours notice for cancellations to avoid fees.',
+                    'payment': 'We accept cash, credit cards, and digital payments (Venmo, PayPal, etc.).'
+                };
+            }
+            
+            processMessage(phone, message) {
+                if (!this.sessions.has(phone)) {
+                    this.sessions.set(phone, { state: 'greeting', context: {} });
+                }
+                
+                const session = this.sessions.get(phone);
+                const msgLower = message.toLowerCase();
+                
+                // Handle different conversation states
+                if (session.state === 'greeting') {
+                    if (msgLower.includes('book') || msgLower.includes('appointment')) {
+                        session.state = 'booking';
+                        session.context.step = 'name';
+                        return "📅 Great! I'll help you book an appointment. First, what's your name?";
+                    } else if (Object.keys(this.faq).some(key => msgLower.includes(key))) {
+                        const key = Object.keys(this.faq).find(k => msgLower.includes(k));
+                        return `📋 ${this.faq[key]}\n\nNeed anything else? Type 'book' for appointments!`;
+                    } else {
+                        return "Hello! Welcome to Style Studio. I can help you:\n\n1️⃣ Book an appointment\n2️⃣ Answer questions about services\n3️⃣ Hours and location info\n\nType 'book', 'hours', 'prices', or ask a question!";
+                    }
+                } else if (session.state === 'booking') {
+                    return this.handleBooking(session, message);
+                }
+                
+                return "I didn't understand. How can I help you today?";
+            }
+            
+            handleBooking(session, message) {
+                const step = session.context.step;
+                
+                switch (step) {
+                    case 'name':
+                        session.context.name = message;
+                        session.context.step = 'service';
+                        return `Nice to meet you, ${message}! What service would you like?\n\n• Haircut\n• Styling\n• Coloring\n• Treatment`;
+                    
+                    case 'service':
+                        session.context.service = message;
+                        session.context.step = 'date';
+                        return "📅 What date works for you?\n\n• 2024-01-15 (Monday)\n• 2024-01-16 (Tuesday)\n• 2024-01-17 (Wednesday)\n\nType the date (YYYY-MM-DD format):";
+                    
+                    case 'date':
+                        session.context.date = message;
+                        session.context.step = 'time';
+                        return "🕐 What time?\n\n• 9:00 AM\n• 10:00 AM\n• 2:00 PM\n• 3:00 PM\n\nPlease select a time:";
+                    
+                    case 'time':
+                        session.context.time = message;
+                        session.state = 'confirmation';
+                        return `📋 Please confirm:\n\n👤 Name: ${session.context.name}\n💇 Service: ${session.context.service}\n📅 Date: ${session.context.date}\n🕐 Time: ${session.context.time}\n\nType 'YES' to confirm or 'NO' to cancel.`;
+                }
+                
+                if (session.state === 'confirmation') {
+                    if (message.toLowerCase().includes('yes')) {
+                        const appointment = {
+                            id: `apt_${Date.now()}`,
+                            name: session.context.name,
+                            service: session.context.service,
+                            date: session.context.date,
+                            time: session.context.time,
+                            phone: session.phone || 'Unknown',
+                            status: 'confirmed'
+                        };
+                        
+                        this.appointments.push(appointment);
+                        session.state = 'completed';
+                        
+                        return `✅ Your appointment is confirmed!\n\n📋 Confirmation ID: ${appointment.id}\n📅 ${appointment.date} at ${appointment.time}\n💇 ${appointment.service}\n\nThank you for choosing Style Studio! 💫`;
+                    } else {
+                        session.state = 'greeting';
+                        return "No problem! Feel free to book anytime. How else can I help?";
+                    }
+                }
+                
+                return "Please follow the booking steps.";
+            }
+            
+            getAppointments() {
+                return this.appointments;
+            }
+            
+            getSessions() {
+                return this.sessions.size;
+            }
+        }
+        
+        // Initialize mock agent
+        const agent = new MockAgent();
+        let messageCount = 0;
+        
+        // DOM functions
+        function sendMessage() {
+            const phoneInput = document.getElementById('phoneNumber');
+            const messageInput = document.getElementById('messageInput');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            const phone = phoneInput.value.trim();
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            userDiv.textContent = message;
+            chatMessages.appendChild(userDiv);
+            
+            // Process message through agent
+            const response = agent.processMessage(phone, message);
+            
+            // Add agent response
+            const agentDiv = document.createElement('div');
+            agentDiv.className = 'message agent-message';
+            agentDiv.textContent = response;
+            chatMessages.appendChild(agentDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Clear input
+            messageInput.value = '';
+            messageCount++;
+            
+            // Update stats
+            updateStats();
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        function quickTest(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+        
+        function updateStats() {
+            document.getElementById('totalSessions').textContent = agent.getSessions();
+            const appointments = agent.getAppointments();
+            document.getElementById('totalAppointments').textContent = appointments.length;
+            
+            const conversionRate = agent.getSessions() > 0 ? 
+                Math.round((appointments.length / agent.getSessions()) * 100) : 0;
+            document.getElementById('conversionRate').textContent = `${conversionRate}%`;
+            
+            updateAppointmentsList();
+        }
+        
+        function updateAppointmentsList() {
+            const appointmentsList = document.getElementById('appointmentsList');
+            const appointments = agent.getAppointments();
+            
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<div style="text-align: center; color: #666; font-style: italic;">No appointments yet. Test the booking flow!</div>';
+                return;
+            }
+            
+            appointmentsList.innerHTML = appointments.map(apt => `
+                <div class="appointment-card">
+                    <div class="appointment-header">
+                        <span class="appointment-id">${apt.id}</span>
+                        <span class="status-badge status-${apt.status}">${apt.status}</span>
+                    </div>
+                    <div class="appointment-details">
+                        <div><span class="detail-label">Name:</span> ${apt.name}</div>
+                        <div><span class="detail-label">Service:</span> ${apt.service}</div>
+                        <div><span class="detail-label">Date:</span> ${apt.date}</div>
+                        <div><span class="detail-label">Time:</span> ${apt.time}</div>
+                    </div>
+                    <button class="cancel-btn" onclick="cancelAppointment('${apt.id}')">Cancel</button>
+                </div>
+            `).join('');
+        }
+        
+        function cancelAppointment(id) {
+            const appointments = agent.getAppointments();
+            const apt = appointments.find(a => a.id === id);
+            if (apt) {
+                apt.status = 'cancelled';
+                updateStats();
+            }
+        }
+        
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
