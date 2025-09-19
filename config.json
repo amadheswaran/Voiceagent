@@ -1,0 +1,199 @@
+{
+  "business_info": {
+    "name": "Updated Business Name",
+    "address": "123 Main Street, Downtown",
+    "phone": "+1-555-TEST"
+  },
+  "business_hours": {
+    "monday": "9:00 AM - 6:00 PM",
+    "tuesday": "9:00 AM - 6:00 PM",
+    "wednesday": "9:00 AM - 6:00 PM",
+    "thursday": "9:00 AM - 6:00 PM",
+    "friday": "9:00 AM - 6:00 PM",
+    "saturday": "10:00 AM - 4:00 PM",
+    "sunday": "Closed"
+  },
+  "services": [
+    {
+      "name": "Haircut",
+      "price": "$30+",
+      "duration": "45 minutes"
+    },
+    {
+      "name": "Styling",
+      "price": "$25+",
+      "duration": "30 minutes"
+    },
+    {
+      "name": "Coloring",
+      "price": "$60+",
+      "duration": "2 hours"
+    },
+    {
+      "name": "Treatment",
+      "price": "$40+",
+      "duration": "60 minutes"
+    },
+    {
+      "name": "Special Event",
+      "price": "$80+",
+      "duration": "90 minutes"
+    }
+  ],
+  "faq_responses": {
+    "hours": "We are open Monday-Friday 9AM-6PM, Saturday 10AM-4PM. Closed Sundays.",
+    "location": "We're located at 123 Main Street, Downtown. Free parking available.",
+    "services": "We offer haircuts, styling, coloring, treatments, and special event styling.",
+    "prices": "Haircuts start at $30, styling from $25, coloring from $60. Call for detailed pricing.",
+    "cancellation": "Please give us 24 hours notice for cancellations to avoid fees.",
+    "walk-ins": "We accept walk-ins but recommend booking ahead to guarantee your preferred time.",
+    "payment": "We accept cash, credit cards, and digital payments (Venmo, PayPal, etc.).",
+    "first-time": "First-time clients get 10% off! Please arrive 15 minutes early for consultation.",
+    "parking": "Free parking is available in the lot behind our building.",
+    "staff": "Our experienced stylists are licensed professionals with 5+ years experience.",
+    "products": "We use premium salon products including Redken, Matrix, and Paul Mitchell.",
+    "hi buddy": "cool buddy",
+    "buddy": "cool buddy"
+  },
+  "appointment_settings": {
+    "booking_window_days": 14,
+    "cancellation_hours": 24,
+    "reminder_hours": 24,
+    "max_appointments_per_day": 8
+  },
+  "automated_responses": {
+    "greeting": "Hello! Welcome to {business_name}. I'm your virtual assistant. How can I help you today?",
+    "booking_success": "\u2705 Your appointment is confirmed! We'll send you a reminder 24 hours before your appointment.",
+    "booking_cancelled": "No problem! Your appointment was not booked. Feel free to start over anytime.",
+    "outside_hours": "Thank you for contacting us! We're currently closed but will respond during business hours.",
+    "error": "I'm sorry, I didn't understand that. Could you please rephrase your request?"
+  },
+  "keywords": {
+    "booking": [
+      "book",
+      "appointment",
+      "schedule",
+      "reserve"
+    ],
+    "faq": [
+      "question",
+      "info",
+      "hours",
+      "location",
+      "price",
+      "service"
+    ],
+    "cancel": [
+      "cancel",
+      "reschedule",
+      "change"
+    ],
+    "confirm": [
+      "yes",
+      "y",
+      "confirm",
+      "ok",
+      "correct"
+    ],
+    "deny": [
+      "no",
+      "n",
+      "cancel",
+      "wrong",
+      "incorrect"
+    ]
+  },
+  "reminder_settings": {
+    "email_enabled": false,
+    "sms_enabled": true,
+    "webhook_enabled": false,
+    "reminder_hours": [
+      24,
+      2
+    ],
+    "business_hours": {
+      "start": 9,
+      "end": 18
+    },
+    "admin_phone": "555-ADMIN",
+    "admin_email": "admin@stylestudio.com",
+    "smtp_server": "smtp.gmail.com",
+    "smtp_port": 587,
+    "email_user": "",
+    "email_password": "",
+    "webhook_url": ""
+  },
+  "calendar_settings": {
+    "enabled": true,
+    "calendar_id": "primary",
+    "sync_direction": "both",
+    "auto_sync": true,
+    "conflict_detection": true,
+    "business_calendar_id": null
+  },
+  "scheduling_settings": {
+    "buffer_minutes": 15,
+    "max_daily_appointments": 8,
+    "lunch_break": {
+      "start": "12:00",
+      "end": "13:00"
+    },
+    "preferred_slots": [
+      "9:00 AM",
+      "10:00 AM",
+      "2:00 PM",
+      "3:00 PM"
+    ],
+    "avoid_slots": [
+      "12:00 PM"
+    ],
+    "auto_suggest_alternatives": true,
+    "optimize_schedule": true
+  },
+  "multi_channel_settings": {
+    "whatsapp": {
+      "enabled": false,
+      "provider": "twilio",
+      "account_sid": "",
+      "auth_token": "",
+      "phone_number": "",
+      "webhook_verify_token": "your_webhook_token"
+    },
+    "sms": {
+      "enabled": false,
+      "provider": "twilio",
+      "account_sid": "",
+      "auth_token": "",
+      "phone_number": ""
+    },
+    "telegram": {
+      "enabled": false,
+      "bot_token": "",
+      "webhook_url": ""
+    },
+    "messenger": {
+      "enabled": false,
+      "page_access_token": "",
+      "verify_token": "",
+      "app_secret": ""
+    },
+    "webchat": {
+      "enabled": true,
+      "embed_code_available": true
+    }
+  },
+  "ui_settings": {
+    "logo_url": "",
+    "favicon_url": "",
+    "primary_color": "#667eea",
+    "secondary_color": "#764ba2",
+    "theme": "default",
+    "custom_css": "",
+    "show_typing": true,
+    "show_timestamps": false,
+    "enable_emojis": false,
+    "auto_scroll": false,
+    "max_chat_history": 100,
+    "welcome_message": ""
+  }
+}
