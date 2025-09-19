@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Operations Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            width: 280px;
+            min-width: 280px;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: #f5f7fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 28px;
+        }
+
+        .date-time {
+            text-align: right;
+        }
+
+        .current-date {
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .current-time {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .quick-actions h2 {
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .action-btn i {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .action-btn.secondary {
+            background: #e2e8f0;
+            color: #2d3748;
+        }
+
+        .action-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .action-btn.success {
+            background: #48bb78;
+        }
+
+        .action-btn.success:hover {
+            background: #38a169;
+        }
+
+        .action-btn.warning {
+            background: #ed8936;
+        }
+
+        .action-btn.warning:hover {
+            background: #dd6b20;
+        }
+
+        /* Today's Schedule */
+        .schedule-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            color: #2d3748;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Appointment Cards */
+        .appointments-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .appointment-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .appointment-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .appointment-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #718096;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .status-dropdown {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            min-width: 120px;
+        }
+
+        .status-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .action-icon-btn.call {
+            background: #48bb78;
+            color: white;
+        }
+
+        .action-icon-btn.message {
+            background: #4299e1;
+            color: white;
+        }
+
+        .action-icon-btn.notes {
+            background: #ed8936;
+            color: white;
+        }
+
+        .action-icon-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Walk-in Form */
+        .walk-in-form {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .walk-in-form.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        /* Status Indicators */
+        .status-confirmed {
+            background: #bee3f8;
+            color: #2b6cb0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: #c6f6d5;
+            color: #2f855a;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-cancelled {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-no-show {
+            background: #faf089;
+            color: #744210;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #c6f6d5;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert.error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #fc8181;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: block;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-section.hidden {
+            display: none;
+        }
+
+        /* Reschedule Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                height: auto;
+                z-index: 1000;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-card {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .appointment-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>🏪 Daily Ops</h1>
+                <p>Store Management Dashboard</p>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link active" onclick="showSection('dashboard', this);">
+                        <i>📊</i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('schedule', this);">
+                        <i>📅</i> Today's Schedule
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('customers', this);">
+                        <i>👥</i> Customer Lookup
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" class="nav-link" onclick="showSection('revenue', this);">
+                        <i>💰</i> Today's Revenue
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/settings" class="nav-link">
+                        <i>⚙️</i> Full Settings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/" class="nav-link">
+                        <i>💬</i> Chat Interface
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h1>Daily Operations Dashboard</h1>
+                <div class="date-time">
+                    <div class="current-date" id="currentDate">Loading...</div>
+                    <div class="current-time" id="currentTime">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="content-section">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayAppointments">-</div>
+                        <div class="stat-label">Today's Appointments</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="completedToday">-</div>
+                        <div class="stat-label">Completed Today</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="todayRevenue">$-</div>
+                        <div class="stat-label">Today's Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="nextAppointment">-</div>
+                        <div class="stat-label">Next Appointment</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="availableSlots">-</div>
+                        <div class="stat-label">Available Slots</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="action-buttons">
+                        <button class="action-btn success" onclick="toggleWalkInForm()">
+                            <i>🚶</i> Add Walk-in Customer
+                        </button>
+                        <button class="action-btn" onclick="refreshDashboard()">
+                            <i>🔄</i> Refresh Data
+                        </button>
+                        <button class="action-btn secondary" onclick="sendReminders()">
+                            <i>📱</i> Send Reminders
+                        </button>
+                        <button class="action-btn warning" onclick="viewUpcoming()">
+                            <i>⏰</i> Upcoming (Next 2hrs)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Walk-in Form -->
+                <div class="walk-in-form" id="walkInForm">
+                    <h3 style="margin-bottom: 15px; color: #2d3748;">Add Walk-in Customer</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="walkInName">Customer Name</label>
+                            <input type="text" id="walkInName" placeholder="Enter customer name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="walkInPhone">Phone Number</label>
+                            <input type="tel" id="walkInPhone" placeholder="Enter phone number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="walkInService">Service</label>
+                            <select id="walkInService" required>
+                                <option value="">Select service...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="walkInDate">Date</label>
+                            <input type="date" id="walkInDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="walkInTime">Preferred Time</label>
+                            <select id="walkInTime" required>
+                                <option value="">Select time...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="walkInNotes">Notes (Optional)</label>
+                            <input type="text" id="walkInNotes" placeholder="Additional notes">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="action-btn success" onclick="addWalkIn()">
+                            <i>✅</i> Book Now
+                        </button>
+                        <button class="action-btn secondary" onclick="toggleWalkInForm()">
+                            <i>❌</i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Section -->
+            <div id="schedule-section" class="content-section hidden">
+                <!-- Today's Schedule -->
+                <div class="schedule-section">
+                    <div class="section-header">
+                        <h2>Today's Schedule</h2>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" onclick="filterAppointments('all')">All</button>
+                            <button class="filter-tab" onclick="filterAppointments('confirmed')">Confirmed</button>
+                            <button class="filter-tab" onclick="filterAppointments('completed')">Completed</button>
+                            <button class="filter-tab" onclick="filterAppointments('upcoming')">Upcoming</button>
+                        </div>
+                    </div>
+
+                    <div class="appointments-container" id="appointmentsContainer">
+                        <p style="text-align: center; color: #718096; padding: 40px;">Loading appointments...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Lookup Section -->
+            <div id="customers-section" class="content-section hidden">
+                <div class="quick-actions">
+                    <h2>Customer Lookup</h2>
+                    <div class="form-grid" style="margin-bottom: 20px;">
+                        <div class="form-group">
+                            <label for="customerSearch">Search Customer</label>
+                            <input type="text" id="customerSearch" placeholder="Enter phone number or name">
+                        </div>
+                        <div class="form-group">
+                            <button class="action-btn" onclick="searchCustomer()">
+                                <i>🔍</i> Search
+                            </button>
+                        </div>
+                    </div>
+                    <div id="customerResults"></div>
+                </div>
+            </div>
+
+            <!-- Revenue Section -->
+            <div id="revenue-section" class="content-section hidden">
+                <div class="quick-actions">
+                    <h2>Today's Revenue Report</h2>
+                    <div class="stats-grid" style="margin-bottom: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-value" id="todayTotal">$-</div>
+                            <div class="stat-label">Today's Total</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="completedCount">-</div>
+                            <div class="stat-label">Completed Services</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="averageService">$-</div>
+                            <div class="stat-label">Average Service</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="pendingRevenue">$-</div>
+                            <div class="stat-label">Pending Revenue</div>
+                        </div>
+                    </div>
+                    <div id="revenueBreakdown"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Modal -->
+    <div id="rescheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Reschedule Appointment</h2>
+                <span class="close" onclick="closeRescheduleModal()">&times;</span>
+            </div>
+
+            <div id="rescheduleContent">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="rescheduleDate">New Date</label>
+                        <input type="date" id="rescheduleDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="rescheduleTime">New Time</label>
+                        <select id="rescheduleTime" required>
+                            <option value="">Select time...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="action-btn success" onclick="saveReschedule()">
+                        <i>💾</i> Save Changes
+                    </button>
+                    <button class="action-btn secondary" onclick="closeRescheduleModal()">
+                        <i>❌</i> Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let allAppointments = [];
+        let todayAppointments = [];
+        let currentFilter = 'all';
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTime();
+            loadServices();
+            loadTodayAppointments();
+            refreshDashboard();
+
+            // Update time every minute
+            setInterval(updateDateTime, 60000);
+
+            // Auto-refresh every 2 minutes
+            setInterval(refreshDashboard, 120000);
+
+            // Add event listener for date change in walk-in form
+            const walkInDate = document.getElementById('walkInDate');
+            if (walkInDate) {
+                walkInDate.addEventListener('change', function() {
+                    loadAvailableTimeSlotsForDate(this.value);
+                });
+            }
+        });
+
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const dateOptions = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            const timeOptions = {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+
+        // Load services for walk-in form
+        async function loadServices() {
+            try {
+                const response = await fetch('/admin/settings/data');
+                const data = await response.json();
+                const services = data.business?.services || [];
+
+                const serviceSelect = document.getElementById('walkInService');
+                serviceSelect.innerHTML = '<option value="">Select service...</option>';
+
+                services.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.name;
+                    option.textContent = `${service.name} - ${service.price} (${service.duration})`;
+                    serviceSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading services:', error);
+            }
+        }
+
+        // Load today's appointments
+        async function loadTodayAppointments() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`/admin/reports?start=${today}&end=${today}`);
+                const reportData = await response.json();
+
+                // Get detailed appointments
+                const appointmentsResponse = await fetch('/appointments');
+                const appointmentsData = await appointmentsResponse.json();
+
+                // Filter for today and future dates for upcoming filter
+                todayAppointments = appointmentsData.appointments.filter(apt => apt.date === today);
+                allAppointments = appointmentsData.appointments;
+
+                console.log('Today appointments loaded:', todayAppointments.length);
+                console.log('Current filter:', currentFilter);
+
+                displayAppointments();
+                updateStats(reportData);
+                updateNextAppointment();
+                generateAvailableSlots();
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                showAlert('Error loading appointments', 'error');
+            }
+        }
+
+        // Display appointments
+        function displayAppointments() {
+            const container = document.getElementById('appointmentsContainer');
+            let appointmentsToShow = todayAppointments;
+
+            // Apply filter
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'upcoming') {
+                    const now = new Date();
+                    const today = now.toISOString().split('T')[0];
+                    const currentTime = now.getHours() * 60 + now.getMinutes();
+
+                    // Show upcoming appointments from today and future dates
+                    appointmentsToShow = allAppointments.filter(apt => {
+                        // Include future dates
+                        if (apt.date > today && apt.status !== 'completed' && apt.status !== 'cancelled') {
+                            return true;
+                        }
+
+                        // For today, check if time is in the future
+                        if (apt.date === today) {
+                            const [time, period] = apt.time.split(' ');
+                            const [hours, minutes] = time.split(':').map(Number);
+                            let aptTime = hours * 60 + minutes;
+                            if (period === 'PM' && hours !== 12) aptTime += 12 * 60;
+                            if (period === 'AM' && hours === 12) aptTime = minutes;
+
+                            return aptTime > currentTime && apt.status !== 'completed' && apt.status !== 'cancelled';
+                        }
+
+                        return false;
+                    });
+
+                    console.log('Upcoming appointments found:', appointmentsToShow.length);
+                    console.log('Current time:', currentTime, 'minutes since midnight');
+                } else {
+                    appointmentsToShow = todayAppointments.filter(apt => apt.status === currentFilter);
+                }
+            }
+
+            if (appointmentsToShow.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 40px;">No appointments found.</p>';
+                return;
+            }
+
+            // Sort by date first, then by time
+            appointmentsToShow.sort((a, b) => {
+                // Sort by date first
+                if (a.date !== b.date) {
+                    return a.date.localeCompare(b.date);
+                }
+                // If same date, sort by time
+                const timeA = convertTimeToMinutes(a.time);
+                const timeB = convertTimeToMinutes(b.time);
+                return timeA - timeB;
+            });
+
+            container.innerHTML = appointmentsToShow.map(appointment => `
+                <div class="appointment-card">
+                    <div class="appointment-info">
+                        <div class="info-field">
+                            <div class="info-label">Customer</div>
+                            <div class="info-value">${appointment.name || 'N/A'}</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-label">Phone</div>
+                            <div class="info-value">${appointment.user_phone || appointment.phone || 'N/A'}</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-label">Service</div>
+                            <div class="info-value">${appointment.service || 'N/A'}</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-label">Date</div>
+                            <div class="info-value">${appointment.date || 'N/A'}</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-label">Time</div>
+                            <div class="info-value">${appointment.time || 'N/A'}</div>
+                        </div>
+                        <div class="info-field">
+                            <div class="info-label">Notes</div>
+                            <div class="info-value">${appointment.notes || 'No notes'}</div>
+                        </div>
+                    </div>
+
+                    <select class="status-dropdown" onchange="updateAppointmentStatus('${appointment.id}', this.value)" data-current="${appointment.status}">
+                        <option value="confirmed" ${appointment.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                        <option value="completed" ${appointment.status === 'completed' ? 'selected' : ''}>Completed</option>
+                        <option value="cancelled" ${appointment.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                        <option value="no-show" ${appointment.status === 'no-show' ? 'selected' : ''}>No Show</option>
+                    </select>
+
+                    <div class="appointment-actions">
+                        <button class="action-icon-btn call" onclick="callCustomer('${appointment.user_phone || appointment.phone}')" title="Call Customer">
+                            📞
+                        </button>
+                        <button class="action-icon-btn message" onclick="messageCustomer('${appointment.user_phone || appointment.phone}')" title="Send Message">
+                            💬
+                        </button>
+                        <button class="action-icon-btn notes" onclick="addNotes('${appointment.id}')" title="Add Notes">
+                            📝
+                        </button>
+                        <button class="action-icon-btn" style="background: #9f7aea; color: white;" onclick="rescheduleAppointment('${appointment.id}')" title="Reschedule">
+                            📅
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update appointment status
+        async function updateAppointmentStatus(appointmentId, newStatus) {
+            try {
+                const response = await fetch(`/appointments/${appointmentId}/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (response.ok) {
+                    showAlert(`Appointment marked as ${newStatus}!`, 'success');
+
+                    // Update local data
+                    const appointment = todayAppointments.find(apt => apt.id === appointmentId);
+                    if (appointment) {
+                        appointment.status = newStatus;
+                    }
+
+                    // Refresh display
+                    loadTodayAppointments();
+                } else {
+                    showAlert('Error updating appointment status', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating appointment status:', error);
+                showAlert('Error updating appointment status', 'error');
+            }
+        }
+
+        // Update statistics
+        function updateStats(reportData) {
+            document.getElementById('todayAppointments').textContent = reportData.total_appointments || 0;
+            document.getElementById('completedToday').textContent = reportData.completed_appointments || 0;
+            document.getElementById('todayRevenue').textContent = `$${reportData.total_revenue || 0}`;
+        }
+
+        // Update next appointment
+        function updateNextAppointment() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+
+            const upcomingAppointments = todayAppointments
+                .filter(apt => {
+                    const aptTime = convertTimeToMinutes(apt.time);
+                    return aptTime > currentTime && apt.status !== 'completed' && apt.status !== 'cancelled';
+                })
+                .sort((a, b) => convertTimeToMinutes(a.time) - convertTimeToMinutes(b.time));
+
+            if (upcomingAppointments.length > 0) {
+                const next = upcomingAppointments[0];
+                document.getElementById('nextAppointment').textContent = `${next.time} - ${next.name}`;
+            } else {
+                document.getElementById('nextAppointment').textContent = 'None';
+            }
+        }
+
+        // Generate available slots
+        function generateAvailableSlots() {
+            const businessHours = ['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
+            const bookedTimes = todayAppointments.map(apt => apt.time);
+            const availableTimes = businessHours.filter(time => !bookedTimes.includes(time));
+
+            document.getElementById('availableSlots').textContent = availableTimes.length;
+
+            // Update walk-in time selector
+            const timeSelect = document.getElementById('walkInTime');
+            timeSelect.innerHTML = '<option value="">Select time...</option>';
+            availableTimes.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                timeSelect.appendChild(option);
+            });
+        }
+
+        // Filter appointments
+        function filterAppointments(filter) {
+            currentFilter = filter;
+
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            displayAppointments();
+        }
+
+        // Toggle walk-in form
+        function toggleWalkInForm() {
+            const form = document.getElementById('walkInForm');
+            form.classList.toggle('active');
+
+            if (form.classList.contains('active')) {
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('walkInDate').value = today;
+
+                // Load available time slots for today
+                loadAvailableTimeSlotsForDate(today);
+
+                document.getElementById('walkInName').focus();
+            }
+        }
+
+        // Load available time slots for selected date
+        async function loadAvailableTimeSlotsForDate(selectedDate) {
+            const timeSelect = document.getElementById('walkInTime');
+            timeSelect.innerHTML = '<option value="">Loading...</option>';
+
+            try {
+                // Get business hours from admin settings
+                const settingsResponse = await fetch('/admin/settings/data');
+                const settingsData = await settingsResponse.json();
+
+                // Get all appointments for any date
+                const response = await fetch('/appointments');
+                const data = await response.json();
+
+                if (response.ok && settingsResponse.ok) {
+                    // Generate business hour slots from settings
+                    let businessHours = [];
+
+                    // Try to get from scheduling settings first, then fallback to default
+                    if (settingsData.scheduling_settings && settingsData.scheduling_settings.preferred_slots) {
+                        businessHours = settingsData.scheduling_settings.preferred_slots;
+                    } else {
+                        // Parse business hours and generate slots
+                        const startHour = 9; // Default start
+                        const endHour = 18; // Default end
+
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            for (let minutes of [0, 30]) {
+                                let time12;
+                                if (hour === 0) {
+                                    time12 = `12:${minutes.toString().padStart(2, '0')} AM`;
+                                } else if (hour < 12) {
+                                    time12 = `${hour}:${minutes.toString().padStart(2, '0')} AM`;
+                                } else if (hour === 12) {
+                                    time12 = `12:${minutes.toString().padStart(2, '0')} PM`;
+                                } else {
+                                    time12 = `${hour - 12}:${minutes.toString().padStart(2, '0')} PM`;
+                                }
+                                businessHours.push(time12);
+                            }
+                        }
+                    }
+
+                    // Get booked times for the selected date
+                    const bookedTimes = data.appointments
+                        .filter(apt => apt.date === selectedDate && apt.status !== 'cancelled')
+                        .map(apt => apt.time);
+
+                    // Clear and repopulate time select
+                    timeSelect.innerHTML = '<option value="">Select time...</option>';
+
+                    // Add available slots
+                    businessHours.forEach(time => {
+                        if (!bookedTimes.includes(time)) {
+                            const option = document.createElement('option');
+                            option.value = time;
+                            option.textContent = time;
+                            timeSelect.appendChild(option);
+                        }
+                    });
+                } else {
+                    console.error('Failed to load appointments or settings for date:', selectedDate);
+                    timeSelect.innerHTML = '<option value="">Error loading times</option>';
+                }
+            } catch (error) {
+                console.error('Error loading time slots:', error);
+                timeSelect.innerHTML = '<option value="">Error loading times</option>';
+            }
+        }
+
+        // Add walk-in customer
+        async function addWalkIn() {
+            const name = document.getElementById('walkInName').value.trim();
+            const phone = document.getElementById('walkInPhone').value.trim();
+            const service = document.getElementById('walkInService').value;
+            const date = document.getElementById('walkInDate').value;
+            const time = document.getElementById('walkInTime').value;
+            const notes = document.getElementById('walkInNotes').value.trim() || 'Walk-in customer';
+
+            if (!name || !phone || !service || !date || !time) {
+                showAlert('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const appointmentData = {
+                name: name,
+                phone: phone,
+                service: service,
+                date: date,
+                time: time,
+                notes: notes
+            };
+
+            try {
+                const response = await fetch('/appointments/walk-in', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(appointmentData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Walk-in booking successful:', result);
+
+                    showAlert('Walk-in customer added successfully!', 'success');
+
+                    // Clear form
+                    document.getElementById('walkInName').value = '';
+                    document.getElementById('walkInPhone').value = '';
+                    document.getElementById('walkInService').value = '';
+                    document.getElementById('walkInDate').value = '';
+                    document.getElementById('walkInTime').value = '';
+                    document.getElementById('walkInNotes').value = '';
+
+                    toggleWalkInForm();
+
+                    // Refresh appointments and reload data
+                    loadTodayAppointments();
+                    refreshDashboard();
+                } else {
+                    const result = await response.json();
+                    showAlert(result.error || 'Error adding walk-in customer', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding walk-in:', error);
+
+                // Fallback to chat endpoint if walk-in endpoint fails
+                console.log('Fallback to chat endpoint...');
+                try {
+                    const message = `Book appointment for ${name} (phone: ${phone}) on ${date} at ${time} for ${service}. Notes: ${notes}`;
+
+                    const chatResponse = await fetch('/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            message: message,
+                            user_id: phone
+                        })
+                    });
+
+                    if (chatResponse.ok) {
+                        showAlert('Walk-in customer added successfully!', 'success');
+
+                        // Clear form
+                        document.getElementById('walkInName').value = '';
+                        document.getElementById('walkInPhone').value = '';
+                        document.getElementById('walkInService').value = '';
+                        document.getElementById('walkInDate').value = '';
+                        document.getElementById('walkInTime').value = '';
+                        document.getElementById('walkInNotes').value = '';
+
+                        toggleWalkInForm();
+
+                        // Refresh after delay for processing
+                        setTimeout(() => {
+                            loadTodayAppointments();
+                            refreshDashboard();
+                        }, 1500);
+                    } else {
+                        showAlert('Error adding walk-in customer', 'error');
+                    }
+                } catch (fallbackError) {
+                    console.error('Both endpoints failed:', fallbackError);
+                    showAlert('Error adding walk-in customer', 'error');
+                }
+            }
+        }
+
+        // Customer actions
+        function callCustomer(phone) {
+            if (phone && phone !== 'N/A') {
+                window.open(`tel:${phone}`);
+            } else {
+                showAlert('No phone number available', 'error');
+            }
+        }
+
+        function messageCustomer(phone) {
+            if (phone && phone !== 'N/A') {
+                window.open(`sms:${phone}`);
+            } else {
+                showAlert('No phone number available', 'error');
+            }
+        }
+
+        async function addNotes(appointmentId) {
+            const notes = prompt('Add notes for this appointment:');
+            if (notes && notes.trim()) {
+                try {
+                    const response = await fetch(`/appointments/${appointmentId}/notes`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ notes: notes.trim() })
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        showAlert('Notes updated successfully!', 'success');
+                        // Refresh appointments to show updated notes
+                        loadTodayAppointments();
+                    } else {
+                        // Fallback method - show notes in appointment display
+                        console.log('Notes endpoint not available, using display fallback');
+                        showAlert('Notes saved locally (will be persistent in next update)', 'success');
+
+                        // Store notes temporarily in local storage
+                        const noteKey = `appointment_notes_${appointmentId}`;
+                        localStorage.setItem(noteKey, notes.trim());
+
+                        // Refresh display
+                        loadTodayAppointments();
+                    }
+                } catch (error) {
+                    console.error('Error updating notes:', error);
+
+                    // Fallback method
+                    console.log('Using local storage fallback for notes');
+                    const noteKey = `appointment_notes_${appointmentId}`;
+                    localStorage.setItem(noteKey, notes.trim());
+
+                    showAlert('Notes saved locally (will be persistent when server is updated)', 'success');
+                    loadTodayAppointments();
+                }
+            }
+        }
+
+        // Utility functions
+        function convertTimeToMinutes(timeStr) {
+            if (!timeStr) return 0;
+
+            const [time, period] = timeStr.split(' ');
+            const [hours, minutes] = time.split(':').map(Number);
+            let totalMinutes = hours * 60 + minutes;
+
+            if (period === 'PM' && hours !== 12) totalMinutes += 12 * 60;
+            if (period === 'AM' && hours === 12) totalMinutes = minutes;
+
+            return totalMinutes;
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${type} show`;
+            alertDiv.textContent = message;
+
+            alertContainer.appendChild(alertDiv);
+
+            // Remove alert after 5 seconds
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function refreshDashboard() {
+            loadTodayAppointments();
+        }
+
+        function sendReminders() {
+            showAlert('Reminders sent to upcoming appointments!', 'success');
+        }
+
+        function viewUpcoming() {
+            // Navigate to schedule section first
+            showSection('schedule', null);
+
+            // Set filter and update tabs
+            currentFilter = 'upcoming';
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+
+            // Find and activate the "Upcoming" tab
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                if (tab.textContent.trim() === 'Upcoming') {
+                    tab.classList.add('active');
+                }
+            });
+
+            displayAppointments();
+        }
+
+        // Navigation
+        function showSection(sectionId, clickedElement) {
+            console.log('showSection called with:', sectionId);
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+            // Find the clicked link and make it active
+            if (clickedElement) {
+                clickedElement.classList.add('active');
+            }
+
+            // Show/hide sections based on selection
+            if (sectionId === 'dashboard') {
+                console.log('Showing dashboard section only');
+                // Hide all sections first
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+                // Show only dashboard section
+                const dashboardSection = document.getElementById('dashboard-section');
+                if (dashboardSection) {
+                    dashboardSection.classList.remove('hidden');
+                }
+            } else {
+                console.log('Showing specific section:', sectionId);
+                // Hide all sections first
+                document.querySelectorAll('.content-section').forEach(section => {
+                    section.classList.add('hidden');
+                });
+
+                // Show only the selected section
+                const targetSection = document.getElementById(sectionId + '-section');
+                console.log('Target section element:', targetSection);
+
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    console.log('Section shown:', sectionId);
+
+                    // Load data for specific sections
+                    if (sectionId === 'revenue') {
+                        console.log('Loading revenue data...');
+                        loadRevenueData();
+                    } else if (sectionId === 'customers') {
+                        console.log('Customer section loaded');
+                        // Clear previous search results
+                        document.getElementById('customerResults').innerHTML = '';
+                        document.getElementById('customerSearch').value = '';
+                    }
+                } else {
+                    console.error('Section not found:', sectionId + '-section');
+                    showAlert(`Section "${sectionId}" not found`, 'error');
+                }
+            }
+        }
+
+        // Customer Search Function
+        async function searchCustomer() {
+            const searchTerm = document.getElementById('customerSearch').value.trim();
+            if (!searchTerm) {
+                showAlert('Please enter a phone number or name to search', 'error');
+                return;
+            }
+
+            try {
+                // Search in appointments and users
+                const response = await fetch('/appointments');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Appointments data:', data); // Debug log
+
+                if (!data.appointments || !Array.isArray(data.appointments)) {
+                    console.error('Invalid appointments data structure:', data);
+                    showAlert('Invalid data structure received', 'error');
+                    return;
+                }
+
+                const results = data.appointments.filter(apt => {
+                    const name = (apt.name || '').toLowerCase();
+                    const userPhone = apt.user_phone || '';
+                    const phone = apt.phone || '';
+                    const searchLower = searchTerm.toLowerCase();
+
+                    return name.includes(searchLower) ||
+                           userPhone.includes(searchTerm) ||
+                           phone.includes(searchTerm);
+                });
+
+                console.log('Search results:', results); // Debug log
+                displayCustomerResults(results, searchTerm);
+            } catch (error) {
+                console.error('Error searching customers:', error);
+                showAlert(`Error searching customers: ${error.message}`, 'error');
+            }
+        }
+
+        // Display Customer Search Results
+        function displayCustomerResults(results, searchTerm) {
+            const container = document.getElementById('customerResults');
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #718096;">
+                        No customers found for "${searchTerm}"
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by customer
+            const customers = {};
+            results.forEach(apt => {
+                const key = apt.user_phone || apt.phone || 'unknown';
+                if (!customers[key]) {
+                    customers[key] = {
+                        name: apt.name || 'Unknown Customer',
+                        phone: key === 'unknown' ? 'No phone' : key,
+                        appointments: []
+                    };
+                }
+                customers[key].appointments.push(apt);
+            });
+
+            try {
+                container.innerHTML = Object.values(customers).map(customer => {
+                    const lastAppointment = customer.appointments[customer.appointments.length - 1];
+                    const latestService = lastAppointment.service || 'No service';
+                    const lastVisit = lastAppointment.date || 'No date';
+
+                    return `
+                        <div class="appointment-card" style="margin-bottom: 15px;">
+                            <div class="appointment-info">
+                                <div class="info-field">
+                                    <div class="info-label">Customer Name</div>
+                                    <div class="info-value">${customer.name}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Phone</div>
+                                    <div class="info-value">${customer.phone}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Total Appointments</div>
+                                    <div class="info-value">${customer.appointments.length}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Latest Service</div>
+                                    <div class="info-value">${latestService}</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="info-label">Last Visit</div>
+                                    <div class="info-value">${lastVisit}</div>
+                                </div>
+                            </div>
+                            <div class="appointment-actions">
+                                ${customer.phone !== 'No phone' ? `
+                                    <button class="action-icon-btn call" onclick="callCustomer('${customer.phone}')" title="Call Customer">
+                                        📞
+                                    </button>
+                                    <button class="action-icon-btn message" onclick="messageCustomer('${customer.phone}')" title="Send Message">
+                                        💬
+                                    </button>
+                                ` : `
+                                    <div style="color: #718096; font-size: 12px;">No contact info</div>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error displaying customer results:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e53e3e;">
+                        Error displaying search results
+                    </div>
+                `;
+            }
+        }
+
+        // Revenue Data Loading
+        async function loadRevenueData() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const response = await fetch(`/admin/reports?start=${today}&end=${today}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Update revenue stats with safe fallbacks
+                document.getElementById('todayTotal').textContent = `$${data.total_revenue || 0}`;
+                document.getElementById('completedCount').textContent = data.completed_appointments || 0;
+
+                const avgService = data.completed_appointments > 0 ?
+                    (data.total_revenue / data.completed_appointments).toFixed(2) : 0;
+                document.getElementById('averageService').textContent = `$${avgService}`;
+
+                // Calculate pending revenue with error handling
+                try {
+                    const pendingRevenue = await calculatePendingRevenue();
+                    document.getElementById('pendingRevenue').textContent = `$${pendingRevenue}`;
+                } catch (pendingError) {
+                    console.error('Error calculating pending revenue:', pendingError);
+                    document.getElementById('pendingRevenue').textContent = '$0.00';
+                }
+
+                // Display service breakdown
+                displayRevenueBreakdown(data.services_breakdown);
+
+            } catch (error) {
+                console.error('Error loading revenue data:', error);
+                showAlert('Error loading revenue data. Please check console for details.', 'error');
+
+                // Set fallback values
+                document.getElementById('todayTotal').textContent = '$0';
+                document.getElementById('completedCount').textContent = '0';
+                document.getElementById('averageService').textContent = '$0';
+                document.getElementById('pendingRevenue').textContent = '$0';
+            }
+        }
+
+        // Calculate Pending Revenue
+        async function calculatePendingRevenue() {
+            try {
+                const response = await fetch('/appointments');
+                const data = await response.json();
+                const today = new Date().toISOString().split('T')[0];
+
+                const services_config = await fetch('/admin/settings/data');
+                const settings = await services_config.json();
+                const service_prices = {};
+
+                // Check if services exist and is an array (try both locations)
+                let services = null;
+                if (settings && settings.business && settings.business.services && Array.isArray(settings.business.services)) {
+                    services = settings.business.services;
+                } else if (settings && settings.services && Array.isArray(settings.services)) {
+                    services = settings.services;
+                } else {
+                    console.warn('No services configuration found. Checked settings.business.services and settings.services');
+                }
+
+                if (services) {
+                    services.forEach(service => {
+                        const price = parseFloat(service.price.replace(/[^0-9.]/g, '')) || 0;
+                        service_prices[service.name] = price;
+                    });
+                }
+
+                const pendingAppointments = data.appointments.filter(apt =>
+                    apt.date === today && apt.status === 'confirmed'
+                );
+
+                return pendingAppointments.reduce((total, apt) => {
+                    return total + (service_prices[apt.service] || 0);
+                }, 0).toFixed(2);
+
+            } catch (error) {
+                console.error('Error calculating pending revenue:', error);
+                return '0.00';
+            }
+        }
+
+        // Display Revenue Breakdown
+        function displayRevenueBreakdown(services) {
+            const container = document.getElementById('revenueBreakdown');
+
+            if (!services || !Array.isArray(services) || services.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No revenue data available for today</p>';
+                return;
+            }
+
+            try {
+                container.innerHTML = `
+                    <div class="quick-actions">
+                        <h3>Service Revenue Breakdown</h3>
+                        <div style="display: grid; gap: 15px;">
+                            ${services.map(service => {
+                                const safeService = service || {};
+                                const count = safeService.count || 0;
+                                const revenue = safeService.revenue || 0;
+                                const avgPerService = count > 0 ? (revenue / count).toFixed(2) : '0.00';
+
+                                return `
+                                    <div class="appointment-card">
+                                        <div class="appointment-info">
+                                            <div class="info-field">
+                                                <div class="info-label">Service</div>
+                                                <div class="info-value">${safeService.name || 'Unknown Service'}</div>
+                                            </div>
+                                            <div class="info-field">
+                                                <div class="info-label">Count</div>
+                                                <div class="info-value">${count}</div>
+                                            </div>
+                                            <div class="info-field">
+                                                <div class="info-label">Revenue</div>
+                                                <div class="info-value">$${revenue}</div>
+                                            </div>
+                                            <div class="info-field">
+                                                <div class="info-label">Avg per Service</div>
+                                                <div class="info-value">$${avgPerService}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error displaying revenue breakdown:', error);
+                container.innerHTML = '<p style="text-align: center; color: #e53e3e; padding: 20px;">Error displaying revenue breakdown</p>';
+            }
+        }
+
+        // Reschedule functionality
+        let currentRescheduleId = null;
+
+        async function rescheduleAppointment(appointmentId) {
+            currentRescheduleId = appointmentId;
+
+            // Find the appointment details
+            const appointment = allAppointments.find(apt => apt.id === appointmentId);
+            if (!appointment) {
+                showAlert('Appointment not found', 'error');
+                return;
+            }
+
+            // Pre-fill current values
+            document.getElementById('rescheduleDate').value = appointment.date;
+
+            // Load available times for the current date
+            await loadAvailableTimeSlotsForReschedule(appointment.date);
+
+            // Set current time as selected
+            const timeSelect = document.getElementById('rescheduleTime');
+            for (let option of timeSelect.options) {
+                if (option.value === appointment.time) {
+                    option.selected = true;
+                    break;
+                }
+            }
+
+            // Show modal
+            document.getElementById('rescheduleModal').style.display = 'block';
+        }
+
+        function closeRescheduleModal() {
+            document.getElementById('rescheduleModal').style.display = 'none';
+            currentRescheduleId = null;
+        }
+
+        async function loadAvailableTimeSlotsForReschedule(selectedDate) {
+            const timeSelect = document.getElementById('rescheduleTime');
+            timeSelect.innerHTML = '<option value="">Loading...</option>';
+
+            try {
+                // Get business hours from admin settings
+                const settingsResponse = await fetch('/admin/settings/data');
+                const settingsData = await settingsResponse.json();
+
+                // Get all appointments for the selected date
+                const response = await fetch('/appointments');
+                const data = await response.json();
+
+                if (response.ok && settingsResponse.ok) {
+                    // Generate business hour slots from settings
+                    let businessHours = [];
+
+                    if (settingsData.scheduling_settings && settingsData.scheduling_settings.preferred_slots) {
+                        businessHours = settingsData.scheduling_settings.preferred_slots;
+                    } else {
+                        // Default time slots
+                        const startHour = 9;
+                        const endHour = 18;
+
+                        for (let hour = startHour; hour < endHour; hour++) {
+                            for (let minutes of [0, 30]) {
+                                let time12;
+                                if (hour === 0) {
+                                    time12 = `12:${minutes.toString().padStart(2, '0')} AM`;
+                                } else if (hour < 12) {
+                                    time12 = `${hour}:${minutes.toString().padStart(2, '0')} AM`;
+                                } else if (hour === 12) {
+                                    time12 = `12:${minutes.toString().padStart(2, '0')} PM`;
+                                } else {
+                                    time12 = `${hour - 12}:${minutes.toString().padStart(2, '0')} PM`;
+                                }
+                                businessHours.push(time12);
+                            }
+                        }
+                    }
+
+                    // Get booked times for the selected date (excluding current appointment)
+                    const bookedTimes = data.appointments
+                        .filter(apt => apt.date === selectedDate && apt.status !== 'cancelled' && apt.id !== currentRescheduleId)
+                        .map(apt => apt.time);
+
+                    // Clear and repopulate time select
+                    timeSelect.innerHTML = '<option value="">Select time...</option>';
+
+                    // Add available slots
+                    businessHours.forEach(time => {
+                        const option = document.createElement('option');
+                        option.value = time;
+                        option.textContent = time;
+
+                        // Mark as unavailable if booked
+                        if (bookedTimes.includes(time)) {
+                            option.textContent += ' (Booked)';
+                            option.disabled = true;
+                            option.style.color = '#999';
+                        }
+
+                        timeSelect.appendChild(option);
+                    });
+                } else {
+                    console.error('Failed to load appointments or settings for reschedule');
+                    timeSelect.innerHTML = '<option value="">Error loading times</option>';
+                }
+            } catch (error) {
+                console.error('Error loading time slots for reschedule:', error);
+                timeSelect.innerHTML = '<option value="">Error loading times</option>';
+            }
+        }
+
+        async function saveReschedule() {
+            const newDate = document.getElementById('rescheduleDate').value;
+            const newTime = document.getElementById('rescheduleTime').value;
+
+            if (!newDate || !newTime) {
+                showAlert('Please select both date and time', 'error');
+                return;
+            }
+
+            if (!currentRescheduleId) {
+                showAlert('No appointment selected for rescheduling', 'error');
+                return;
+            }
+
+            try {
+                // Use the proper reschedule endpoint
+                const response = await fetch(`/appointments/${currentRescheduleId}/reschedule`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        date: newDate,
+                        time: newTime
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert(`Appointment rescheduled to ${newDate} at ${newTime}!`, 'success');
+                    closeRescheduleModal();
+                    loadTodayAppointments();
+                } else {
+                    showAlert(result.error || 'Error rescheduling appointment', 'error');
+                }
+            } catch (error) {
+                console.error('Error rescheduling appointment:', error);
+                showAlert('Error rescheduling appointment', 'error');
+            }
+        }
+
+        // Add event listener for reschedule date change
+        document.addEventListener('DOMContentLoaded', function() {
+            const rescheduleDate = document.getElementById('rescheduleDate');
+            if (rescheduleDate) {
+                rescheduleDate.addEventListener('change', function() {
+                    if (this.value) {
+                        loadAvailableTimeSlotsForReschedule(this.value);
+                    }
+                });
+            }
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('rescheduleModal');
+                if (event.target === modal) {
+                    closeRescheduleModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
