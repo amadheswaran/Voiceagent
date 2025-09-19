@@ -39,6 +39,44 @@ def get_config():
     """Serve the configuration file"""
     return send_from_directory('.', 'config.json')
 
+@app.route('/chat/quick-actions', methods=['GET'])
+def get_quick_actions():
+    """Get quick actions for chat interface"""
+    try:
+        settings = admin_settings.get_all_settings()
+        faq_responses = settings.get('faq_responses', {})
+
+        # Priority order for quick actions
+        priority_actions = [
+            {'key': 'booking', 'icon': '📅', 'label': 'Book Appointment', 'message': 'book appointment', 'always_show': True},
+            {'key': 'hours', 'icon': '🕐', 'label': 'Hours', 'message': 'hours'},
+            {'key': 'services', 'icon': '💇', 'label': 'Services', 'message': 'services'},
+            {'key': 'prices', 'icon': '💰', 'label': 'Prices', 'message': 'prices'},
+            {'key': 'location', 'icon': '📍', 'label': 'Location', 'message': 'location'},
+            {'key': 'parking', 'icon': '🅿️', 'label': 'Parking', 'message': 'parking'},
+            {'key': 'payment', 'icon': '💳', 'label': 'Payment', 'message': 'payment'},
+            {'key': 'cancellation', 'icon': '❌', 'label': 'Cancellation', 'message': 'cancellation'}
+        ]
+
+        # Filter available quick actions
+        available_actions = []
+        for action in priority_actions:
+            if action.get('always_show') or action['key'] in faq_responses:
+                available_actions.append(action)
+                if len(available_actions) >= 6:  # Limit to 6 actions
+                    break
+
+        return jsonify({
+            'quick_actions': available_actions,
+            'business_name': settings.get('business_info', {}).get('name', 'AI Assistant'),
+            'welcome_message': settings.get('automated_responses', {}).get('greeting', ''),
+            'ui_settings': settings.get('ui_settings', {})
+        })
+
+    except Exception as e:
+        print(f"Error getting quick actions: {e}")
+        return jsonify({'error': 'Failed to get quick actions'}), 500
+
 @app.route('/chat', methods=['POST'])
 def chat():
     """Handle chat messages from the web interface"""
