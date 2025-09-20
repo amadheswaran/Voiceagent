@@ -1,28 +1,20 @@
-# api/index.py
-# This file exposes your Flask app to Vercel's Python runtime.
-# It should export a variable named `app` which is the Flask app instance.
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+import uvicorn
 
-import sys
-import traceback
+app = FastAPI()
 
-try:
-    # try import your app object from the repo root `app.py`
-    # If your app uses a factory like `create_app()`, import + call that instead.
-    from app import app   # <-- adjust if your Flask instance is named differently
-except Exception as exc:
-    # If import fails, expose a minimal fallback app to help debugging in Vercel logs.
-    from flask import Flask, Response
-    fallback = Flask(__name__)
+@app.get("/")
+async def home():
+    return {"message": "AI Voice Agent is running on Vercel!"}
 
-    @fallback.route("/", defaults={"path": ""})
-    @fallback.route("/<path:path>")
-    def _err(path):
-        tb = traceback.format_exc()
-        msg = (
-            "Failed to import your Flask app.\n\n"
-            "Exception:\n"
-            f"{tb}\n\n"
-            "Check that app.py defines `app = Flask(__name__)` or adjust api/index.py to import properly."
-        )
-        return Response(msg, status=500, mimetype="text/plain")
-    app = fallback
+@app.post("/chat")
+async def chat(request: Request):
+    data = await request.json()
+    user_input = data.get("message", "")
+    # Call your chatbot logic here
+    bot_response = f"You said: {user_input}"
+    return JSONResponse({"response": bot_response})
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
